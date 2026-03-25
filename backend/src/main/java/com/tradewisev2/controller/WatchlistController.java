@@ -1,6 +1,7 @@
 package com.tradewisev2.controller;
 
-import com.tradewisev2.dto.StockResponse;
+import com.tradewisev2.dto.WatchlistResponse;
+import com.tradewisev2.model.Watchlist;
 import com.tradewisev2.service.WatchlistService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,18 +19,21 @@ public class WatchlistController {
         this.watchlistService = watchlistService;
     }
 
-    @GetMapping("/{userId}")
-    public List<StockResponse> getWatchlist(@PathVariable Long userId) {
-        return watchlistService.getWatchlist(userId);
+    @PostMapping("/add")
+    public Watchlist addToWatchlist(@RequestBody Map<String, String> request) {
+        Long userId = Long.parseLong(request.get("userId"));
+        String symbol = request.get("symbol");
+        return watchlistService.addToWatchlist(userId, symbol);
     }
 
-    @PostMapping("/add")
-    public Map<String, String> addToWatchlist(@RequestParam Long userId, @RequestParam String symbol) {
-        return Map.of("message", watchlistService.addToWatchlist(userId, symbol));
+    @GetMapping("/{userId}")
+    public List<WatchlistResponse> getWatchlist(@PathVariable Long userId) {
+        return watchlistService.getWatchlistByUserId(userId);
     }
 
     @DeleteMapping("/remove")
     public Map<String, String> removeFromWatchlist(@RequestParam Long userId, @RequestParam String symbol) {
-        return Map.of("message", watchlistService.removeFromWatchlist(userId, symbol));
+        watchlistService.removeFromWatchlist(userId, symbol);
+        return Map.of("message", "Removed from watchlist");
     }
 }

@@ -1,58 +1,85 @@
 package com.tradewisev2.service;
 
-import com.tradewisev2.dto.StockResponse;
+import com.tradewisev2.dto.WatchlistResponse;
+import com.tradewisev2.model.Stock;
 import com.tradewisev2.model.User;
 import com.tradewisev2.model.Watchlist;
+import com.tradewisev2.repository.StockRepository;
+import com.tradewisev2.repository.UserRepository;
 import com.tradewisev2.repository.WatchlistRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class WatchlistService {
 
     private final WatchlistRepository watchlistRepository;
-    private final UserService userService;
-    private final StockService stockService;
+    private final UserRepository userRepository;
+    private final StockRepository stockRepository;
 
     public WatchlistService(WatchlistRepository watchlistRepository,
-                            UserService userService,
-                            StockService stockService) {
+                            UserRepository userRepository,
+                            StockRepository stockRepository) {
         this.watchlistRepository = watchlistRepository;
-        this.userService = userService;
-        this.stockService = stockService;
+        this.userRepository = userRepository;
+        this.stockRepository = stockRepository;
     }
 
-    public List<StockResponse> getWatchlist(Long userId) {
-        return watchlistRepository.findByUserId(userId)
-                .stream()
-                .map(item -> stockService.getStockBySymbol(item.getStockSymbol()))
-                .toList();
-    }
+    public Watchlist addToWatchlist(Long userId, String symbol) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    public String addToWatchlist(Long userId, String symbol) {
-        User user = userService.getUserById(userId);
+        String normalizedSymbol = symbol == null ? "" : symbol.trim().toUpperCase();
 
-        boolean exists = watchlistRepository.findByUserIdAndStockSymbol(userId, symbol).isPresent();
-        if (exists) {
+        Stock stock = stockRepository.findBySymbol(normalizedSymbol)
+                .orElseThrow(() -> new RuntimeException("Stock not found"));
+
+        boolean alreadyExists = watchlistRepository.findByUserId(userId).stream()
+                .anyMatch(item -> item.getStockSymbol() != null
+                        && item.getStockSymbol().equalsIgnoreCase(normalizedSymbol));
+
+        if (alreadyExists) {
             throw new RuntimeException("Stock already in watchlist");
         }
 
-        watchlistRepository.save(
-                Watchlist.builder()
-                        .user(user)
-                        .stockSymbol(symbol)
-                        .build()
-        );
+        Watchlist watchlist = new Watchlist();
+        watchlist.setUser(user);
+        watchlist.setStockSymbol(stock.getSymbol());
 
-        return "Stock added to watchlist";
+        return watchlistRepository.save(watchlist);
     }
 
-    public String removeFromWatchlist(Long userId, String symbol) {
-        Watchlist item = watchlistRepository.findByUserIdAndStockSymbol(userId, symbol)
+    public List<WatchlistResponse> getWatchlistByUserId(Long userId) {
+        List<Watchlist> items = watchlistRepository.findByUserId(userId);
+
+        return items.stream().map(item -> {
+            Stock stock = stockRepository.findBySymbol(item.getStockSymbol()).orElse(null);
+
+            String companyName = stock != null ? stock.getCompanyName() : item.getStockSymbol();
+            Double currentPrice = stock != null ? stock.getCurrentPrice() : 0.0;
+
+            return new WatchlistResponse(
+                    item.getId(),
+                    item.getStockSymbol(),
+                    companyName,
+                    currentPrice
+            );
+        }).collect(Collectors.toList());
+    }
+
+    public void removeFromWatchlist(Long userId, String symbol) {
+        String normalizedSymbol = symbol == null ? "" : symbol.trim().toUpperCase();
+
+        List<Watchlist> items = watchlistRepository.findByUserId(userId);
+
+        Watchlist watchlist = items.stream()
+                .filter(item -> item.getStockSymbol() != null
+                        && item.getStockSymbol().equalsIgnoreCase(normalizedSymbol))
+                .findFirst()
                 .orElseThrow(() -> new RuntimeException("Stock not found in watchlist"));
 
-        watchlistRepository.delete(item);
-        return "Stock removed from watchlist";
+        watchlistRepository.delete(watchlist);
     }
 }

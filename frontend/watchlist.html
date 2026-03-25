@@ -802,11 +802,11 @@
         return;
       }
 
-      const top = [...watchlist].sort((a, b) => Number(b.changePercent) - Number(a.changePercent))[0];
-      document.getElementById("topWatch").textContent = top.symbol;
-      document.getElementById("topWatchMove").textContent = formatPct(top.changePercent);
-      document.getElementById("topWatchMove").className = Number(top.changePercent) >= 0 ? "green" : "red";
-      document.getElementById("heroTag").textContent = `${top.symbol} is drawing the strongest watchlist attention`;
+      const top = [...watchlist].sort((a, b) => Number(b.currentPrice) - Number(a.currentPrice))[0];
+      document.getElementById("topWatch").textContent = top.stockSymbol || "--";
+      document.getElementById("topWatchMove").textContent = formatINR(top.currentPrice);
+      document.getElementById("topWatchMove").className = "green";
+      document.getElementById("heroTag").textContent = `${top.stockSymbol} is drawing the strongest watchlist attention`;
 
       watchlist.forEach(stock => {
         const card = document.createElement("div");
@@ -814,16 +814,14 @@
 
         card.innerHTML = `
           <div class="watch-main">
-            <h5>${stock.symbol}</h5>
+            <h5>${stock.stockSymbol}</h5>
             <p>${stock.companyName}</p>
           </div>
           <div class="watch-price">
             <strong>${formatINR(stock.currentPrice)}</strong>
-            <span class="${Number(stock.changePercent) >= 0 ? "green" : "red"}">
-              ${formatPct(stock.changePercent)}
-            </span>
+            <span class="green">Tracked</span>
           </div>
-          <button class="remove-btn" onclick="removeFromWatchlist('${stock.symbol}')">Remove</button>
+          <button class="remove-btn" onclick="removeFromWatchlist('${stock.stockSymbol}')">Remove</button>
         `;
 
         grid.appendChild(card);
@@ -846,10 +844,16 @@
       }
 
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/watchlist/add?userId=${encodeURIComponent(userId)}&symbol=${encodeURIComponent(symbol)}`,
-          { method: "POST" }
-        );
+        const response = await fetch(`${API_BASE_URL}/watchlist/add`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: String(userId),
+            symbol: symbol
+          })
+        });
 
         const data = await response.json().catch(() => null);
 
@@ -858,7 +862,7 @@
         }
 
         input.value = "";
-        showMessage(data?.message || `${symbol} added to watchlist successfully.`, "green");
+        showMessage(`${symbol} added to watchlist successfully.`, "green");
         await loadWatchlist();
 
       } catch (error) {

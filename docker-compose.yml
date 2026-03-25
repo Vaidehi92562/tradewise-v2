@@ -69,10 +69,24 @@ services:
     networks:
       - tradewisev2-network
 
+  tradewisev2-jenkins:
+    build:
+      context: ./jenkins
+    container_name: tradewisev2-jenkins
+    restart: unless-stopped
+    ports:
+      - "8086:8080"
+      - "50001:50000"
+    volumes:
+      - tradewisev2_jenkins_data:/var/jenkins_home
+    networks:
+      - tradewisev2-network
+
 volumes:
   tradewisev2_mysql_data:
   tradewisev2_prometheus_data:
   tradewisev2_grafana_data:
+  tradewisev2_jenkins_data:
 
 networks:
   tradewisev2-network:
