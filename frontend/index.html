@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeWise V2 | Smart Paper Trading</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.10), transparent 25%),
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 28%),
+        linear-gradient(135deg, #06111f 0%, #091827 45%, #0b1220 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .page-shell {
+      width: min(1400px, 92%);
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(8, 15, 28, 0.72);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      position: sticky;
+      top: 18px;
+      z-index: 20;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #22c55e, #3b82f6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 10px 25px rgba(34, 197, 94, 0.25);
+    }
+
+    .brand-text h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-text p {
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      color: #cbd5e1;
+      font-size: 14px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      transition: 0.25s ease;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 12px 20px;
+      font-weight: 700;
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #03210f;
+      box-shadow: 0 12px 30px rgba(34, 197, 94, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 36px rgba(34, 197, 94, 0.32);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 34px;
+      align-items: center;
+      padding: 48px 0 30px;
+      min-height: calc(100vh - 130px);
+    }
+
+    .hero-left {
+      position: relative;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.10);
+      border: 1px solid rgba(34, 197, 94, 0.18);
+      color: #bbf7d0;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .tag-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.8);
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.65; }
+    }
+
+    .hero-left h2 {
+      font-size: clamp(40px, 6vw, 74px);
+      line-height: 1.04;
+      letter-spacing: -1.6px;
+      font-weight: 850;
+      margin-bottom: 18px;
+      max-width: 760px;
+    }
+
+    .hero-left h2 span {
+      background: linear-gradient(135deg, #86efac, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-left p {
+      max-width: 660px;
+      color: #cbd5e1;
+      font-size: 18px;
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 34px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(120px, 1fr));
+      gap: 16px;
+      max-width: 760px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      padding: 18px 18px 16px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.14);
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      color: #94a3b8;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .hero-right {
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone-board {
+      width: min(100%, 520px);
+      border-radius: 34px;
+      padding: 24px;
+      background:
+        linear-gradient(180deg, rgba(14, 24, 40, 0.95), rgba(8, 15, 28, 0.95));
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow:
+        0 30px 70px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phone-board::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.16), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(34, 197, 94, 0.13), transparent 26%);
+      pointer-events: none;
+    }
+
+    .board-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mini-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .mini-brand strong {
+      font-size: 18px;
+      letter-spacing: 0.2px;
+    }
+
+    .mini-brand span {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .market-status {
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.10);
+      color: #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.14);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .wallet-card {
+      position: relative;
+      z-index: 1;
+      border-radius: 24px;
+      padding: 22px;
+      background: linear-gradient(135deg, rgba(13, 88, 62, 0.92), rgba(11, 31, 53, 0.92));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 18px;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18);
+    }
+
+    .wallet-card small {
+      display: block;
+      color: #d1fae5;
+      font-size: 12px;
+      margin-bottom: 8px;
+      letter-spacing: 0.4px;
+    }
+
+    .wallet-card h3 {
+      font-size: 34px;
+      font-weight: 850;
+      margin-bottom: 10px;
+    }
+
+    .wallet-card p {
+      color: #dbeafe;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .stock-list {
+      display: grid;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stock-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: 0.25s ease;
+    }
+
+    .stock-row:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .stock-left {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .stock-symbol {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .stock-name {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .stock-right {
+      text-align: right;
+    }
+
+    .stock-price {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .stock-change {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .up {
+      color: #86efac;
+    }
+
+    .down {
+      color: #fca5a5;
+    }
+
+    .hero-float {
+      position: absolute;
+      border-radius: 22px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 16px 18px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+      animation: floaty 4s ease-in-out infinite;
+    }
+
+    .hero-float strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .hero-float span {
+      color: #cbd5e1;
+      font-size: 12px;
+    }
+
+    .float-one {
+      left: -30px;
+      top: 18%;
+    }
+
+    .float-two {
+      right: -18px;
+      bottom: 14%;
+      animation-delay: 1.2s;
+    }
+
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .feature-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .feature-box {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .feature-box h4 {
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .feature-box p {
+      color: #94a3b8;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1180px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 34px;
+      }
+
+      .hero-right {
+        order: -1;
+      }
+
+      .phone-board {
+        max-width: 620px;
+      }
+
+      .float-one, .float-two {
+        display: none;
+      }
+
+      .feature-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .navbar {
+        padding: 16px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero-left p {
+        font-size: 16px;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .page-shell {
+        width: min(94%, 1400px);
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .hero-cta {
+        align-items: stretch;
+      }
+
+      .nav-actions {
+        width: 100%;
+      }
+
+      .nav-actions .btn {
+        width: auto;
+      }
+
+      .wallet-card h3 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <nav class="navbar">
+      <div class="brand">
+        <div class="brand-badge">TW</div>
+        <div class="brand-text">
+          <h1>TradeWise V2</h1>
+          <p>Indian paper trading, reimagined</p>
+        </div>
+      </div>
+
+      <div class="nav-links">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#market-preview" class="nav-link">Market Preview</a>
+        <a href="login.html" class="nav-link">Login</a>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn btn-outline" onclick="goToPage('login.html')">Login</button>
+        <button class="btn btn-primary" onclick="goToPage('register.html')">Get Started</button>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-left">
+        <div class="tag">
+          <div class="tag-dot"></div>
+          Live market feel • Wallet-based trading • Indian stocks
+        </div>
+
+        <h2>
+          Practice trading with a
+          <span>premium market experience</span>
+          before risking real money.
+        </h2>
+
+        <p>
+          TradeWise V2 is an Indian paper trading platform inspired by real apps like Upstox.
+          Track live-changing stock prices, manage your wallet, build your portfolio, monitor
+          your transactions, and experience a smarter way to learn trading.
+        </p>
+
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="goToPage('register.html')">Create Account</button>
+          <button class="btn btn-outline" onclick="goToPage('login.html')">Explore Demo Flow</button>
+        </div>
+
+        <div class="hero-stats" id="features">
+          <div class="stat-card">
+            <div class="stat-value">₹1,00,000</div>
+            <div class="stat-label">Maximum wallet balance for paper trading and realistic money discipline.</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">1 sec</div>
+            <div class="stat-label">Live simulated stock price refresh for a more active market experience.</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">Buy + Sell</div>
+            <div class="stat-label">Trade both ways, track holdings, and see dynamic portfolio performance.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right" id="market-preview">
+        <div class="hero-float float-one">
+          <strong id="floatingPnl">+₹2,480</strong>
+          <span>Today's simulated P&L</span>
+        </div>
+
+        <div class="phone-board">
+          <div class="board-top">
+            <div class="mini-brand">
+              <strong>Live Market Preview</strong>
+              <span>Indian stocks • paper trading mode</span>
+            </div>
+            <div class="market-status">Market Active</div>
+          </div>
+
+          <div class="wallet-card">
+            <small>AVAILABLE BALANCE</small>
+            <h3 id="walletAmount">₹74,250</h3>
+            <p>
+              Add funds, place simulated orders, and trade only with the amount available
+              in your wallet — just like a disciplined trading workflow.
+            </p>
+          </div>
+
+          <div class="stock-list" id="stockList"></div>
+        </div>
+
+        <div class="hero-float float-two">
+          <strong id="floatingMove">RELIANCE +1.84%</strong>
+          <span>Trending market mover</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature-strip">
+      <div class="feature-box">
+        <h4>Wallet-first trading</h4>
+        <p>Users can trade only with available wallet balance, making the experience more realistic and controlled.</p>
+      </div>
+      <div class="feature-box">
+        <h4>Dynamic market simulation</h4>
+        <p>Stock prices visibly change with green and red movements to create a strong live market feel.</p>
+      </div>
+      <div class="feature-box">
+        <h4>Portfolio intelligence</h4>
+        <p>Track invested value, current market value, profit/loss, holdings, and transaction activity in one place.</p>
+      </div>
+      <div class="feature-box">
+        <h4>DevOps-ready build</h4>
+        <p>Designed to be containerized, tested, monitored, and managed using a clean DevOps workflow.</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function goToPage(page) {
+      window.location.href = page;
+    }
+
+    const stocks = [
+      { symbol: "RELIANCE", name: "Reliance Industries", price: 2948.40, change: 1.84 },
+      { symbol: "TCS", name: "Tata Consultancy Services", price: 4012.85, change: -0.62 },
+      { symbol: "INFY", name: "Infosys", price: 1629.20, change: 1.12 },
+      { symbol: "HDFCBANK", name: "HDFC Bank", price: 1687.45, change: 0.78 },
+      { symbol: "ICICIBANK", name: "ICICI Bank", price: 1098.25, change: 1.36 },
+      { symbol: "SBIN", name: "State Bank of India", price: 823.60, change: -1.14 }
+    ];
+
+    const stockList = document.getElementById("stockList");
+    const walletAmount = document.getElementById("walletAmount");
+    const floatingPnl = document.getElementById("floatingPnl");
+    const floatingMove = document.getElementById("floatingMove");
+
+    let wallet = 74250;
+    let pnl = 2480;
+
+    function formatINR(value) {
+      return "₹" + value.toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function renderStocks() {
+      stockList.innerHTML = "";
+
+      stocks.forEach(stock => {
+        const row = document.createElement("div");
+        row.className = "stock-row";
+
+        const changeClass = stock.change >= 0 ? "up" : "down";
+        const sign = stock.change >= 0 ? "+" : "";
+
+        row.innerHTML = `
+          <div class="stock-left">
+            <div class="stock-symbol">${stock.symbol}</div>
+            <div class="stock-name">${stock.name}</div>
+          </div>
+          <div class="stock-right">
+            <div class="stock-price">${formatINR(stock.price)}</div>
+            <div class="stock-change ${changeClass}">${sign}${stock.change.toFixed(2)}%</div>
+          </div>
+        `;
+
+        stockList.appendChild(row);
+      });
+    }
+
+    function tickMarket() {
+      stocks.forEach(stock => {
+        const priceMove = (Math.random() * 18) - 9;
+        const changeMove = (Math.random() * 0.70) - 0.35;
+
+        stock.price = Math.max(100, stock.price + priceMove);
+        stock.change = Math.max(-5, Math.min(5, stock.change + changeMove));
+      });
+
+      wallet += (Math.random() * 900) - 450;
+      wallet = Math.max(30000, Math.min(100000, wallet));
+
+      pnl += (Math.random() * 400) - 200;
+
+      const topMover = [...stocks].sort((a, b) => b.change - a.change)[0];
+      const sign = pnl >= 0 ? "+" : "-";
+
+      walletAmount.textContent = formatINR(wallet);
+      floatingPnl.textContent = `${sign}₹${Math.abs(pnl).toFixed(0)}`;
+      floatingPnl.style.color = pnl >= 0 ? "#86efac" : "#fca5a5";
+      floatingMove.textContent = `${topMover.symbol} ${topMover.change >= 0 ? "+" : ""}${topMover.change.toFixed(2)}%`;
+      floatingMove.style.color = topMover.change >= 0 ? "#86efac" : "#fca5a5";
+
+      renderStocks();
+    }
+
+    renderStocks();
+    setInterval(tickMarket, 1600);
+  </script>
+</body>
+</html>

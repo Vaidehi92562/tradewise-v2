@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeWise V2 | Portfolio</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.08), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.10), transparent 28%),
+        linear-gradient(135deg, #06101d 0%, #081221 42%, #0b1424 100%);
+      color: #f8fafc;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: rgba(5, 10, 20, 0.92);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #22c55e, #3b82f6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.24);
+    }
+
+    .brand-text h1 {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .profile-card {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(17, 28, 52, 0.96), rgba(11, 67, 48, 0.86));
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 18px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+    }
+
+    .profile-card small {
+      display: block;
+      color: #cbd5e1;
+      font-size: 11px;
+      margin-bottom: 8px;
+      letter-spacing: 0.4px;
+    }
+
+    .profile-card h2 {
+      font-size: 28px;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .profile-card p {
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .nav-title {
+      color: #64748b;
+      font-size: 12px;
+      margin: 14px 0 12px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      color: #e2e8f0;
+      padding: 16px 18px;
+      border-radius: 18px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.06);
+      transform: translateX(2px);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(59, 130, 246, 0.18));
+      border-color: rgba(110, 231, 183, 0.20);
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.10);
+    }
+
+    .logout-btn {
+      margin-top: 18px;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 15px 18px;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .main {
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .topbar-left h3 {
+      font-size: 34px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      letter-spacing: -0.8px;
+    }
+
+    .topbar-left p {
+      color: #94a3b8;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .market-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.10);
+      border: 1px solid rgba(34, 197, 94, 0.18);
+      color: #bbf7d0;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .market-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34,197,94,0.8);
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.6; }
+    }
+
+    .hero-split {
+      display: grid;
+      grid-template-columns: 1.02fr 0.98fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .left-panel,
+    .right-panel,
+    .holdings-panel,
+    .activity-panel {
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.04);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.16);
+      backdrop-filter: blur(8px);
+    }
+
+    .left-panel {
+      padding: 26px;
+      background:
+        radial-gradient(circle at top right, rgba(34,197,94,0.10), transparent 22%),
+        linear-gradient(135deg, rgba(13, 22, 39, 0.98), rgba(8, 24, 49, 0.94));
+    }
+
+    .portfolio-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 15px;
+      border-radius: 999px;
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(134,239,172,0.18);
+      color: #bbf7d0;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .left-panel h1 {
+      font-size: 42px;
+      line-height: 1.08;
+      margin-bottom: 12px;
+      letter-spacing: -0.8px;
+    }
+
+    .left-panel p {
+      color: #cbd5e1;
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 22px;
+      max-width: 720px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .summary-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .summary-card small {
+      display: block;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .summary-card strong {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .summary-card span {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .right-panel {
+      overflow: hidden;
+      min-height: 470px;
+      position: relative;
+      background:
+        linear-gradient(to top, rgba(4, 10, 22, 0.60), rgba(4, 10, 22, 0.15)),
+        url('https://i.pinimg.com/736x/bf/c6/8c/bfc68cfd705f05f8817e31a01cacca14.jpg') center/cover no-repeat;
+      display: flex;
+      align-items: flex-end;
+      padding: 28px;
+    }
+
+    .right-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(4,10,22,0.08), rgba(4,10,22,0.76)),
+        radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 24%);
+    }
+
+    .right-content {
+      position: relative;
+      z-index: 2;
+      max-width: 430px;
+    }
+
+    .right-content h2 {
+      font-size: 34px;
+      margin-bottom: 12px;
+      line-height: 1.08;
+    }
+
+    .right-content p {
+      color: #dbeafe;
+      line-height: 1.8;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+
+    .right-tag {
+      display: inline-flex;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      font-size: 13px;
+      font-weight: 800;
+      color: #dcfce7;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 18px;
+    }
+
+    .holdings-panel,
+    .activity-panel {
+      padding: 22px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .panel-header h4 {
+      font-size: 24px;
+    }
+
+    .panel-header span {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .holding-list,
+    .activity-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .holding-card,
+    .activity-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: 0.25s ease;
+    }
+
+    .holding-card:hover,
+    .activity-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .holding-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .holding-top h5 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .holding-top p {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .holding-price {
+      text-align: right;
+    }
+
+    .holding-price strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .holding-price span {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .green {
+      color: #86efac;
+    }
+
+    .red {
+      color: #fca5a5;
+    }
+
+    .holding-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .mini-box {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .mini-box small {
+      display: block;
+      color: #94a3b8;
+      margin-bottom: 6px;
+      font-size: 11px;
+    }
+
+    .mini-box strong {
+      font-size: 15px;
+    }
+
+    .activity-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .activity-left strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .activity-left p {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .activity-right {
+      text-align: right;
+    }
+
+    .activity-right strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .activity-right span {
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    .empty-state {
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #cbd5e1;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 1300px) {
+      .hero-split,
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .main {
+        padding: 16px;
+      }
+
+      .summary-grid,
+      .holding-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .left-panel h1,
+      .right-content h2 {
+        font-size: 30px;
+      }
+
+      .topbar-left h3 {
+        font-size: 28px;
+      }
+
+      .activity-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .activity-right {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand-wrap">
+          <div class="brand-badge">TW</div>
+          <div class="brand-text">
+            <h1>TradeWise V2</h1>
+            <p>Premium paper trading</p>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <small>Logged in as</small>
+          <h2 id="userName">Trader</h2>
+          <p id="userEmail">user@email.com</p>
+        </div>
+
+        <div class="nav-title">Navigation</div>
+
+        <div class="nav-list">
+          <button class="nav-btn" onclick="goToPage('dashboard.html')">Dashboard</button>
+          <button class="nav-btn" onclick="goToPage('market.html')">Market</button>
+          <button class="nav-btn active" onclick="goToPage('portfolio.html')">Portfolio</button>
+          <button class="nav-btn" onclick="goToPage('watchlist.html')">Watchlist</button>
+          <button class="nav-btn" onclick="goToPage('transactions.html')">Transactions</button>
+          <button class="nav-btn" onclick="goToPage('live-track.html')">Live Track</button>
+          <button class="nav-btn" onclick="goToPage('funds.html')">Funds</button>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="logoutUser()">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h3>Portfolio Overview</h3>
+          <p>
+            Track your active holdings, current market value, invested capital, and overall
+            profit or loss in one premium portfolio view.
+          </p>
+        </div>
+
+        <div class="market-pill">
+          <div class="market-dot"></div>
+          Backend portfolio synced every 2 seconds
+        </div>
+      </div>
+
+      <section class="hero-split">
+        <div class="left-panel">
+          <div class="portfolio-label">Holdings • Returns • Performance</div>
+          <h1>Your portfolio is your trading story in numbers.</h1>
+          <p>
+            Monitor how your paper-traded positions are performing, compare invested value with
+            current value, and understand your movement with real backend-connected data.
+          </p>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <small>Total Invested</small>
+              <strong id="investedValue">₹0.00</strong>
+              <span>Capital currently committed to your holdings.</span>
+            </div>
+            <div class="summary-card">
+              <small>Current Value</small>
+              <strong id="currentValue">₹0.00</strong>
+              <span>Updated market worth of your portfolio.</span>
+            </div>
+            <div class="summary-card">
+              <small>Total P&L</small>
+              <strong id="totalPnl">₹0.00</strong>
+              <span>Net profit or loss across all active holdings.</span>
+            </div>
+            <div class="summary-card">
+              <small>Holdings Count</small>
+              <strong id="holdingCount">0</strong>
+              <span>Number of stocks currently in your portfolio.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-panel">
+          <div class="right-overlay"></div>
+          <div class="right-content">
+            <div class="right-tag" id="portfolioTag">Portfolio Growth 0.00%</div>
+            <h2>Strong portfolios are built with discipline, not just movement.</h2>
+            <p>
+              Measure position quality, monitor gains and losses, and build a realistic investing mindset
+              through a premium portfolio dashboard experience.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="bottom-grid">
+        <div class="holdings-panel">
+          <div class="panel-header">
+            <div>
+              <h4>Your Holdings</h4>
+              <span>Real backend portfolio positions</span>
+            </div>
+            <span id="marketTime">Updated now</span>
+          </div>
+
+          <div class="holding-list" id="holdingList"></div>
+        </div>
+
+        <div class="activity-panel">
+          <div class="panel-header">
+            <div>
+              <h4>Portfolio Snapshot</h4>
+              <span>Quick portfolio insights</span>
+            </div>
+          </div>
+
+          <div class="activity-list" id="activityList"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const API_BASE_URL = "http://localhost:8085/api";
+
+    function goToPage(page) {
+      window.location.href = page;
+    }
+
+    function getUserId() {
+      return localStorage.getItem("tradewisev2_user_id");
+    }
+
+    function loadUser() {
+      const storedName = localStorage.getItem("tradewisev2_user_name") || "Trader";
+      const storedEmail = localStorage.getItem("tradewisev2_user_email") || "user@email.com";
+      document.getElementById("userName").textContent = storedName;
+      document.getElementById("userEmail").textContent = storedEmail;
+    }
+
+    function formatINR(value) {
+      return "₹" + Number(value || 0).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatPct(value) {
+      const num = Number(value || 0);
+      return `${num >= 0 ? "+" : ""}${num.toFixed(2)}%`;
+    }
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("marketTime").textContent =
+        "Updated " + now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+
+    function renderSummary(portfolio) {
+      const invested = Number(portfolio.totalInvested || 0);
+      const current = Number(portfolio.currentValue || 0);
+      const pnl = Number(portfolio.totalProfitLoss || 0);
+      const holdings = Array.isArray(portfolio.holdings) ? portfolio.holdings : [];
+      const growthPercent = invested > 0 ? (pnl / invested) * 100 : 0;
+
+      document.getElementById("investedValue").textContent = formatINR(invested);
+      document.getElementById("currentValue").textContent = formatINR(current);
+      document.getElementById("holdingCount").textContent = holdings.length;
+
+      const pnlEl = document.getElementById("totalPnl");
+      pnlEl.textContent = `${pnl >= 0 ? "+" : "-"}${formatINR(Math.abs(pnl))}`;
+      pnlEl.className = pnl >= 0 ? "green" : "red";
+
+      document.getElementById("portfolioTag").textContent = `Portfolio Growth ${formatPct(growthPercent)}`;
+    }
+
+    function renderHoldings(portfolio) {
+      const holdingList = document.getElementById("holdingList");
+      const holdings = Array.isArray(portfolio.holdings) ? portfolio.holdings : [];
+
+      holdingList.innerHTML = "";
+
+      if (!holdings.length) {
+        holdingList.innerHTML = `
+          <div class="empty-state">
+            No holdings yet. Buy stocks from the Market page to build your portfolio.
+          </div>
+        `;
+        return;
+      }
+
+      holdings.forEach(stock => {
+        const pnl = Number(stock.profitLoss || 0);
+
+        const card = document.createElement("div");
+        card.className = "holding-card";
+
+        card.innerHTML = `
+          <div class="holding-top">
+            <div>
+              <h5>${stock.stockSymbol}</h5>
+              <p>Backend-connected holding position</p>
+            </div>
+            <div class="holding-price">
+              <strong>${formatINR(stock.currentPrice)}</strong>
+              <span class="${pnl >= 0 ? "green" : "red"}">
+                ${pnl >= 0 ? "+" : "-"}${formatINR(Math.abs(pnl))}
+              </span>
+            </div>
+          </div>
+
+          <div class="holding-stats">
+            <div class="mini-box">
+              <small>Quantity</small>
+              <strong>${stock.quantity}</strong>
+            </div>
+            <div class="mini-box">
+              <small>Avg Buy</small>
+              <strong>${formatINR(stock.averageBuyPrice)}</strong>
+            </div>
+            <div class="mini-box">
+              <small>Invested</small>
+              <strong>${formatINR(stock.investedValue)}</strong>
+            </div>
+            <div class="mini-box">
+              <small>Current Value</small>
+              <strong>${formatINR(stock.currentValue)}</strong>
+            </div>
+          </div>
+        `;
+
+        holdingList.appendChild(card);
+      });
+    }
+
+    function renderActivity(portfolio) {
+      const activityList = document.getElementById("activityList");
+      const holdings = Array.isArray(portfolio.holdings) ? portfolio.holdings : [];
+      const totalInvested = Number(portfolio.totalInvested || 0);
+      const totalCurrent = Number(portfolio.currentValue || 0);
+      const totalPnl = Number(portfolio.totalProfitLoss || 0);
+
+      activityList.innerHTML = "";
+
+      if (!holdings.length) {
+        activityList.innerHTML = `
+          <div class="empty-state">
+            Portfolio insights will appear here once you start buying stocks.
+          </div>
+        `;
+        return;
+      }
+
+      const bestHolding = [...holdings].sort((a, b) => Number(b.profitLoss) - Number(a.profitLoss))[0];
+      const worstHolding = [...holdings].sort((a, b) => Number(a.profitLoss) - Number(b.profitLoss))[0];
+
+      const activityItems = [
+        {
+          title: "Best Performing Holding",
+          detail: `${bestHolding.stockSymbol} is contributing the strongest performance.`,
+          amount: `${Number(bestHolding.profitLoss) >= 0 ? "+" : "-"}${formatINR(Math.abs(bestHolding.profitLoss))}`,
+          type: Number(bestHolding.profitLoss) >= 0 ? "green" : "red"
+        },
+        {
+          title: "Weakest Performing Holding",
+          detail: `${worstHolding.stockSymbol} currently has the lowest return.`,
+          amount: `${Number(worstHolding.profitLoss) >= 0 ? "+" : "-"}${formatINR(Math.abs(worstHolding.profitLoss))}`,
+          type: Number(worstHolding.profitLoss) >= 0 ? "green" : "red"
+        },
+        {
+          title: "Total Portfolio Difference",
+          detail: `Difference between invested capital and current market value.`,
+          amount: `${totalPnl >= 0 ? "+" : "-"}${formatINR(Math.abs(totalPnl))}`,
+          type: totalPnl >= 0 ? "green" : "red"
+        },
+        {
+          title: "Portfolio Strength",
+          detail: `Current value ${formatINR(totalCurrent)} against invested ${formatINR(totalInvested)}.`,
+          amount: `${holdings.length} holdings`,
+          type: "green"
+        }
+      ];
+
+      activityItems.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "activity-card";
+
+        card.innerHTML = `
+          <div class="activity-left">
+            <strong>${item.title}</strong>
+            <p>${item.detail}</p>
+          </div>
+          <div class="activity-right">
+            <strong class="${item.type}">${item.amount}</strong>
+            <span>Live backend snapshot</span>
+          </div>
+        `;
+
+        activityList.appendChild(card);
+      });
+    }
+
+    async function loadPortfolio() {
+      const userId = getUserId();
+
+      if (!userId) {
+        document.getElementById("holdingList").innerHTML = `
+          <div class="empty-state">
+            No logged in user found. Please login again.
+          </div>
+        `;
+        document.getElementById("activityList").innerHTML = `
+          <div class="empty-state">
+            Login is required to load your portfolio.
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/portfolio/${userId}`);
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok || !data) {
+          throw new Error(data?.message || "Unable to load portfolio.");
+        }
+
+        renderSummary(data);
+        renderHoldings(data);
+        renderActivity(data);
+
+      } catch (error) {
+        document.getElementById("holdingList").innerHTML = `
+          <div class="empty-state">
+            Unable to load portfolio. Please ensure backend is running and try again.
+          </div>
+        `;
+        document.getElementById("activityList").innerHTML = `
+          <div class="empty-state">
+            ${error.message || "Portfolio API request failed."}
+          </div>
+        `;
+      }
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("tradewisev2_logged_in");
+      localStorage.removeItem("tradewisev2_user_id");
+      localStorage.removeItem("tradewisev2_user_name");
+      localStorage.removeItem("tradewisev2_user_email");
+      window.location.href = "login.html";
+    }
+
+    window.addEventListener("DOMContentLoaded", async function () {
+      loadUser();
+      updateClock();
+      await loadPortfolio();
+
+      setInterval(async () => {
+        await loadPortfolio();
+        updateClock();
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeWise V2 | Transactions</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.08), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.10), transparent 28%),
+        linear-gradient(135deg, #06101d 0%, #081221 42%, #0b1424 100%);
+      color: #f8fafc;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: rgba(5, 10, 20, 0.92);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #22c55e, #3b82f6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.24);
+    }
+
+    .brand-text h1 {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .profile-card {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(17, 28, 52, 0.96), rgba(11, 67, 48, 0.86));
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 18px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+    }
+
+    .profile-card small {
+      display: block;
+      color: #cbd5e1;
+      font-size: 11px;
+      margin-bottom: 8px;
+      letter-spacing: 0.4px;
+    }
+
+    .profile-card h2 {
+      font-size: 28px;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .profile-card p {
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .nav-title {
+      color: #64748b;
+      font-size: 12px;
+      margin: 14px 0 12px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      color: #e2e8f0;
+      padding: 16px 18px;
+      border-radius: 18px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.06);
+      transform: translateX(2px);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(59, 130, 246, 0.18));
+      border-color: rgba(110, 231, 183, 0.20);
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.10);
+    }
+
+    .logout-btn {
+      margin-top: 18px;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 15px 18px;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .main {
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .topbar-left h3 {
+      font-size: 34px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      letter-spacing: -0.8px;
+    }
+
+    .topbar-left p {
+      color: #94a3b8;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .trans-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.10);
+      border: 1px solid rgba(34, 197, 94, 0.18);
+      color: #bbf7d0;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .trans-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34,197,94,0.8);
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.6; }
+    }
+
+    .hero-split {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .left-panel,
+    .right-panel,
+    .list-panel,
+    .summary-panel {
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.04);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.16);
+      backdrop-filter: blur(8px);
+    }
+
+    .left-panel {
+      overflow: hidden;
+      min-height: 560px;
+      position: relative;
+      background:
+        linear-gradient(to top, rgba(4, 10, 22, 0.65), rgba(4, 10, 22, 0.14)),
+        url('https://i.pinimg.com/1200x/c4/e6/8b/c4e68b353ce667e3bae2bf1999c3751a.jpg') center/cover no-repeat;
+      display: flex;
+      align-items: flex-end;
+      padding: 34px;
+    }
+
+    .left-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(4,10,22,0.08), rgba(4,10,22,0.82)),
+        radial-gradient(circle at top left, rgba(34,197,94,0.10), transparent 24%);
+    }
+
+    .left-content {
+      position: relative;
+      z-index: 2;
+      max-width: 520px;
+    }
+
+    .left-tag {
+      display: inline-flex;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      font-size: 13px;
+      font-weight: 800;
+      color: #dcfce7;
+      margin-bottom: 14px;
+    }
+
+    .left-content h2 {
+      font-size: 40px;
+      margin-bottom: 12px;
+      line-height: 1.08;
+    }
+
+    .left-content p {
+      color: #dbeafe;
+      line-height: 1.8;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+
+    .right-panel {
+      padding: 26px;
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,0.10), transparent 22%),
+        linear-gradient(135deg, rgba(13, 22, 39, 0.98), rgba(11, 20, 37, 0.96));
+    }
+
+    .trans-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 15px;
+      border-radius: 999px;
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(96,165,250,0.18);
+      color: #bfdbfe;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .right-panel h1 {
+      font-size: 42px;
+      line-height: 1.08;
+      margin-bottom: 12px;
+      letter-spacing: -0.8px;
+    }
+
+    .right-panel p {
+      color: #cbd5e1;
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 22px;
+    }
+
+    .summary-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .summary-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .summary-card small {
+      display: block;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .summary-card strong {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .summary-card span {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .green {
+      color: #86efac;
+    }
+
+    .red {
+      color: #fca5a5;
+    }
+
+    .loading {
+      color: #93c5fd;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 18px;
+    }
+
+    .list-panel,
+    .summary-panel {
+      padding: 22px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .panel-header h4 {
+      font-size: 24px;
+    }
+
+    .panel-header span {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .search-input {
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(8, 15, 28, 0.92);
+      color: white;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .search-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .reset-btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-weight: 800;
+      font-size: 14px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      transition: 0.25s ease;
+    }
+
+    .reset-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .transaction-list,
+    .summary-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .transaction-card,
+    .summary-card-mini {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: 0.25s ease;
+    }
+
+    .transaction-card:hover,
+    .summary-card-mini:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .transaction-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .transaction-left strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .transaction-left p {
+      color: #94a3b8;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .transaction-right {
+      text-align: right;
+    }
+
+    .transaction-right strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .transaction-right span {
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    .summary-card-mini strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .summary-card-mini p {
+      color: #94a3b8;
+      line-height: 1.7;
+      font-size: 13px;
+    }
+
+    .empty-state {
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #cbd5e1;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 1300px) {
+      .hero-split,
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .main {
+        padding: 16px;
+      }
+
+      .filter-row {
+        grid-template-columns: 1fr;
+      }
+
+      .left-content h2,
+      .right-panel h1 {
+        font-size: 30px;
+      }
+
+      .topbar-left h3 {
+        font-size: 28px;
+      }
+
+      .left-panel {
+        min-height: 420px;
+      }
+
+      .transaction-right {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand-wrap">
+          <div class="brand-badge">TW</div>
+          <div class="brand-text">
+            <h1>TradeWise V2</h1>
+            <p>Premium paper trading</p>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <small>Logged in as</small>
+          <h2 id="userName">Trader</h2>
+          <p id="userEmail">user@email.com</p>
+        </div>
+
+        <div class="nav-title">Navigation</div>
+
+        <div class="nav-list">
+          <button class="nav-btn" onclick="goToPage('dashboard.html')">Dashboard</button>
+          <button class="nav-btn" onclick="goToPage('market.html')">Market</button>
+          <button class="nav-btn" onclick="goToPage('portfolio.html')">Portfolio</button>
+          <button class="nav-btn" onclick="goToPage('watchlist.html')">Watchlist</button>
+          <button class="nav-btn active" onclick="goToPage('transactions.html')">Transactions</button>
+          <button class="nav-btn" onclick="goToPage('live-track.html')">Live Track</button>
+          <button class="nav-btn" onclick="goToPage('funds.html')">Funds</button>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="logoutUser()">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h3>Transactions</h3>
+          <p>
+            Review your complete backend-connected paper trading activity, including buy orders,
+            sell orders, and fund additions in one clean premium history view.
+          </p>
+        </div>
+
+        <div class="trans-pill">
+          <div class="trans-dot"></div>
+          Real transaction history from backend
+        </div>
+      </div>
+
+      <section class="hero-split">
+        <div class="left-panel">
+          <div class="left-overlay"></div>
+          <div class="left-content">
+            <div class="left-tag" id="heroTag">Every transaction tells part of your trading story</div>
+            <h2>Discipline becomes visible when every action is tracked clearly.</h2>
+            <p>
+              Study your buy and fund flow, review how capital moved, and understand your paper
+              trading journey through an organized transaction timeline.
+            </p>
+          </div>
+        </div>
+
+        <div class="right-panel">
+          <div class="trans-label">Orders • Wallet • History</div>
+          <h1>A clean transaction trail creates better trading decisions.</h1>
+          <p>
+            Use this page to understand how your paper trading actions build up over time.
+            Clear records help improve timing, risk control, and execution quality.
+          </p>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <small>Total Transactions</small>
+              <strong id="totalTransactions">0</strong>
+              <span>Total recorded buy, sell, and fund-related actions.</span>
+            </div>
+            <div class="summary-card">
+              <small>Total Buy Volume</small>
+              <strong id="buyVolume">₹0.00</strong>
+              <span>Combined simulated buy-side order value.</span>
+            </div>
+            <div class="summary-card">
+              <small>Total Sell Volume</small>
+              <strong id="sellVolume">₹0.00</strong>
+              <span>Combined simulated sell-side order value.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bottom-grid">
+        <div class="list-panel">
+          <div class="panel-header">
+            <div>
+              <h4>Transaction History</h4>
+              <span>Detailed backend activity log</span>
+            </div>
+            <span id="marketTime">Updated now</span>
+          </div>
+
+          <div class="filter-row">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by stock symbol or type..." />
+            <button class="reset-btn" onclick="resetFilter()">Reset</button>
+          </div>
+
+          <div class="transaction-list" id="transactionList"></div>
+        </div>
+
+        <div class="summary-panel">
+          <div class="panel-header">
+            <div>
+              <h4>Transaction Insights</h4>
+              <span>Why this matters</span>
+            </div>
+          </div>
+
+          <div class="summary-list" id="summaryList">
+            <div class="summary-card-mini">
+              <strong>Trade review support</strong>
+              <p>
+                Transaction history lets you review past buy and sell behavior and understand how decisions evolved.
+              </p>
+            </div>
+            <div class="summary-card-mini">
+              <strong>Wallet movement clarity</strong>
+              <p>
+                It becomes easier to see how funds entered and exited your paper trading system over time.
+              </p>
+            </div>
+            <div class="summary-card-mini">
+              <strong>Execution awareness</strong>
+              <p>
+                The more clearly you can review your own actions, the more intentional your future trades become.
+              </p>
+            </div>
+            <div class="summary-card-mini">
+              <strong>Portfolio context</strong>
+              <p>
+                Every active holding in your portfolio started as one of the actions shown here.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const API_BASE_URL = "http://localhost:8085/api";
+    let transactions = [];
+
+    function goToPage(page) {
+      window.location.href = page;
+    }
+
+    function getUserId() {
+      return localStorage.getItem("tradewisev2_user_id");
+    }
+
+    function loadUser() {
+      const storedName = localStorage.getItem("tradewisev2_user_name") || "Trader";
+      const storedEmail = localStorage.getItem("tradewisev2_user_email") || "user@email.com";
+      document.getElementById("userName").textContent = storedName;
+      document.getElementById("userEmail").textContent = storedEmail;
+    }
+
+    function formatINR(value) {
+      return "₹" + Number(value || 0).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("marketTime").textContent =
+        "Updated " + now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+
+    function normalizeType(type) {
+      if (type === "FUND_ADD") return "FUNDS";
+      return type || "UNKNOWN";
+    }
+
+    function renderSummary() {
+      const totalTransactions = transactions.length;
+      const buyVolume = transactions
+        .filter(t => t.transactionType === "BUY")
+        .reduce((sum, t) => sum + Number(t.totalAmount || 0), 0);
+
+      const sellVolume = transactions
+        .filter(t => t.transactionType === "SELL")
+        .reduce((sum, t) => sum + Number(t.totalAmount || 0), 0);
+
+      document.getElementById("totalTransactions").textContent = totalTransactions;
+      document.getElementById("buyVolume").textContent = formatINR(buyVolume);
+      document.getElementById("sellVolume").textContent = formatINR(sellVolume);
+
+      const buyCount = transactions.filter(t => t.transactionType === "BUY").length;
+      const sellCount = transactions.filter(t => t.transactionType === "SELL").length;
+      const fundCount = transactions.filter(t => t.transactionType === "FUND_ADD").length;
+
+      document.getElementById("heroTag").textContent =
+        `${buyCount} buys, ${sellCount} sells, and ${fundCount} fund actions are shaping your journey`;
+    }
+
+    function renderTransactions() {
+      const list = document.getElementById("transactionList");
+      const search = document.getElementById("searchInput").value.trim().toLowerCase();
+
+      const filtered = transactions.filter(item => {
+        const type = normalizeType(item.transactionType).toLowerCase();
+        const symbol = String(item.stockSymbol || "").toLowerCase();
+        return type.includes(search) || symbol.includes(search);
+      });
+
+      list.innerHTML = "";
+
+      if (!filtered.length) {
+        list.innerHTML = `
+          <div class="empty-state">
+            No matching transactions found. Try another search term or start trading from the Market page.
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const type = normalizeType(item.transactionType);
+        const isBuy = item.transactionType === "BUY";
+        const isSell = item.transactionType === "SELL";
+        const isFund = item.transactionType === "FUND_ADD";
+
+        const amountText =
+          `${isSell || isFund ? "+" : "-"}${formatINR(item.totalAmount)}`;
+
+        const amountClass = isBuy ? "red" : "green";
+        const quantityText = isFund ? "Wallet top-up" : `Qty ${item.quantity}`;
+
+        const card = document.createElement("div");
+        card.className = "transaction-card";
+
+        card.innerHTML = `
+          <div class="transaction-left">
+            <strong>${type} • ${item.stockSymbol}</strong>
+            <p>${quantityText} • Price ${formatINR(item.pricePerStock)}</p>
+          </div>
+          <div class="transaction-right">
+            <strong class="${amountClass}">${amountText}</strong>
+            <span>${new Date(item.timestamp).toLocaleString("en-IN")}</span>
+          </div>
+        `;
+
+        list.appendChild(card);
+      });
+    }
+
+    function resetFilter() {
+      document.getElementById("searchInput").value = "";
+      renderTransactions();
+    }
+
+    function renderInsights() {
+      const summaryList = document.getElementById("summaryList");
+      const buys = transactions.filter(t => t.transactionType === "BUY");
+      const sells = transactions.filter(t => t.transactionType === "SELL");
+      const funds = transactions.filter(t => t.transactionType === "FUND_ADD");
+
+      let topBuy = buys[0];
+      if (buys.length) {
+        topBuy = [...buys].sort((a, b) => Number(b.totalAmount) - Number(a.totalAmount))[0];
+      }
+
+      summaryList.innerHTML = `
+        <div class="summary-card-mini">
+          <strong>Trade review support</strong>
+          <p>You currently have ${transactions.length} backend-recorded transaction entries.</p>
+        </div>
+        <div class="summary-card-mini">
+          <strong>Wallet movement clarity</strong>
+          <p>${funds.length} fund actions have been recorded in your wallet history.</p>
+        </div>
+        <div class="summary-card-mini">
+          <strong>Execution awareness</strong>
+          <p>${buys.length} buy orders and ${sells.length} sell orders have shaped your active journey.</p>
+        </div>
+        <div class="summary-card-mini">
+          <strong>Largest buy snapshot</strong>
+          <p>${topBuy ? `${topBuy.stockSymbol} at ${formatINR(topBuy.totalAmount)}` : "No buy transactions yet."}</p>
+        </div>
+      `;
+    }
+
+    async function loadTransactions() {
+      const userId = getUserId();
+
+      if (!userId) {
+        document.getElementById("transactionList").innerHTML = `
+          <div class="empty-state">
+            No logged in user found. Please login again.
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/transactions/${userId}`);
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok || !Array.isArray(data)) {
+          throw new Error(data?.message || "Unable to load transactions.");
+        }
+
+        transactions = data;
+        renderSummary();
+        renderTransactions();
+        renderInsights();
+
+      } catch (error) {
+        document.getElementById("transactionList").innerHTML = `
+          <div class="empty-state">
+            Unable to load transactions. Please ensure backend is running and try again.
+          </div>
+        `;
+      }
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("tradewisev2_logged_in");
+      localStorage.removeItem("tradewisev2_user_id");
+      localStorage.removeItem("tradewisev2_user_name");
+      localStorage.removeItem("tradewisev2_user_email");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("searchInput").addEventListener("input", renderTransactions);
+
+    window.addEventListener("DOMContentLoaded", async function () {
+      loadUser();
+      updateClock();
+      await loadTransactions();
+
+      setInterval(async () => {
+        await loadTransactions();
+        updateClock();
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

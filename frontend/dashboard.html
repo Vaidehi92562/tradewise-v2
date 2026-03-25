@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeWise V2 | Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.08), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.10), transparent 28%),
+        linear-gradient(135deg, #06101d 0%, #081221 42%, #0b1424 100%);
+      color: #f8fafc;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: rgba(5, 10, 20, 0.92);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #22c55e, #3b82f6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.24);
+    }
+
+    .brand-text h1 {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .profile-card {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(17, 28, 52, 0.96), rgba(11, 67, 48, 0.86));
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 18px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+    }
+
+    .profile-card small {
+      display: block;
+      color: #cbd5e1;
+      font-size: 11px;
+      margin-bottom: 8px;
+      letter-spacing: 0.4px;
+    }
+
+    .profile-card h2 {
+      font-size: 28px;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .profile-card p {
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .nav-title {
+      color: #64748b;
+      font-size: 12px;
+      margin: 14px 0 12px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      color: #e2e8f0;
+      padding: 16px 18px;
+      border-radius: 18px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.06);
+      transform: translateX(2px);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(59, 130, 246, 0.18));
+      border-color: rgba(110, 231, 183, 0.20);
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.10);
+    }
+
+    .logout-btn {
+      margin-top: 18px;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 15px 18px;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .main {
+      padding: 26px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .topbar-left h3 {
+      font-size: 34px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      letter-spacing: -0.8px;
+    }
+
+    .topbar-left p {
+      color: #94a3b8;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .market-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.10);
+      border: 1px solid rgba(34, 197, 94, 0.18);
+      color: #bbf7d0;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .market-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34,197,94,0.8);
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.6; }
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .hero-card, .panel, .summary-card, .stock-card {
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.04);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.16);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-card {
+      padding: 28px;
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,0.14), transparent 24%),
+        linear-gradient(135deg, rgba(15, 40, 74, 0.94), rgba(12, 79, 56, 0.88));
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      right: -60px;
+      top: -60px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .hero-card small {
+      display: block;
+      color: #d1fae5;
+      margin-bottom: 8px;
+      font-size: 12px;
+      letter-spacing: 0.6px;
+    }
+
+    .hero-card h1 {
+      font-size: 46px;
+      line-height: 1.04;
+      margin-bottom: 14px;
+      max-width: 650px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-card p {
+      max-width: 620px;
+      color: #dbeafe;
+      line-height: 1.8;
+      font-size: 15px;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .action-btn {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 13px 18px;
+      font-weight: 800;
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .action-primary {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #03210f;
+    }
+
+    .action-secondary {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: white;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .wallet-panel {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        radial-gradient(circle at top right, rgba(34,197,94,0.10), transparent 20%),
+        linear-gradient(180deg, rgba(10, 18, 32, 0.96), rgba(8, 14, 28, 0.96));
+    }
+
+    .wallet-panel small {
+      display: block;
+      color: #94a3b8;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .wallet-panel h2 {
+      font-size: 42px;
+      margin-bottom: 8px;
+    }
+
+    .wallet-panel p {
+      color: #cbd5e1;
+      line-height: 1.7;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .mini-wallet-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .mini-box {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .mini-box strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .mini-box span {
+      color: #94a3b8;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .summary-card {
+      padding: 22px;
+    }
+
+    .summary-card small {
+      display: block;
+      color: #94a3b8;
+      margin-bottom: 10px;
+      font-size: 12px;
+      letter-spacing: 0.4px;
+    }
+
+    .summary-card h4 {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .summary-card p {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .green {
+      color: #86efac;
+    }
+
+    .red {
+      color: #fca5a5;
+    }
+
+    .loading {
+      color: #93c5fd;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+    }
+
+    .panel {
+      padding: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .panel-header h5 {
+      font-size: 24px;
+    }
+
+    .panel-header span {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .stock-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .stock-card {
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      transition: 0.25s ease;
+    }
+
+    .stock-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .stock-left h6 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .stock-left p {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .stock-right {
+      text-align: right;
+    }
+
+    .stock-right strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .stock-right span {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .activity-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .activity-item {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .activity-left strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .activity-left p {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .activity-right {
+      text-align: right;
+    }
+
+    .activity-right strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .activity-right span {
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    .chart-strip {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .bars {
+      height: 120px;
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .bar {
+      flex: 1;
+      border-radius: 10px 10px 0 0;
+      background: linear-gradient(180deg, #60a5fa, #22c55e);
+      opacity: 0.92;
+      transition: 0.3s ease;
+    }
+
+    .empty-state {
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #cbd5e1;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 1200px) {
+      .hero-grid,
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .main {
+        padding: 18px;
+      }
+
+      .hero-card h1 {
+        font-size: 34px;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-wallet-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar-left h3 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand-wrap">
+          <div class="brand-badge">TW</div>
+          <div class="brand-text">
+            <h1>TradeWise V2</h1>
+            <p>Premium paper trading</p>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <small>Logged in as</small>
+          <h2 id="userName">Trader</h2>
+          <p id="userEmail">user@email.com</p>
+        </div>
+
+        <div class="nav-title">Navigation</div>
+
+        <div class="nav-list">
+          <button class="nav-btn active" onclick="goToPage('dashboard.html')">Dashboard</button>
+          <button class="nav-btn" onclick="goToPage('market.html')">Market</button>
+          <button class="nav-btn" onclick="goToPage('portfolio.html')">Portfolio</button>
+          <button class="nav-btn" onclick="goToPage('watchlist.html')">Watchlist</button>
+          <button class="nav-btn" onclick="goToPage('transactions.html')">Transactions</button>
+          <button class="nav-btn" onclick="goToPage('live-track.html')">Live Track</button>
+          <button class="nav-btn" onclick="goToPage('funds.html')">Funds</button>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="logoutUser()">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h3 id="welcomeTitle">Welcome back, Trader</h3>
+          <p>
+            Monitor your wallet, track your portfolio, follow market movement, and review
+            your latest backend-connected trading activity from one command center.
+          </p>
+        </div>
+
+        <div class="market-pill">
+          <div class="market-dot"></div>
+          Dashboard synced every 2 seconds
+        </div>
+      </div>
+
+      <section class="hero-grid">
+        <div class="hero-card">
+          <small>Smart Trading Command Center</small>
+          <h1>Your portfolio, wallet, and activity are now connected to the backend.</h1>
+          <p>
+            TradeWise V2 now pulls real paper-trading data from your backend APIs, including
+            wallet balance, holdings, transaction history, and top moving Indian stocks.
+          </p>
+          <div class="hero-actions">
+            <button class="action-btn action-primary" onclick="goToPage('market.html')">Start Trading</button>
+            <button class="action-btn action-secondary" onclick="goToPage('live-track.html')">Open Live Track</button>
+          </div>
+        </div>
+
+        <div class="wallet-panel">
+          <div>
+            <small>AVAILABLE WALLET BALANCE</small>
+            <h2 id="walletBalance">₹0.00</h2>
+            <p>
+              Your wallet powers every buy action. Add funds, place orders, and manage your
+              paper trading discipline like a real platform.
+            </p>
+          </div>
+
+          <div class="mini-wallet-stats">
+            <div class="mini-box">
+              <strong id="remainingLimit">₹1,00,000.00</strong>
+              <span>Remaining wallet limit</span>
+            </div>
+            <div class="mini-box">
+              <strong id="todayPnl" class="green">₹0.00</strong>
+              <span>Current portfolio profit/loss</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="summary-grid">
+        <div class="summary-card">
+          <small>Total Invested</small>
+          <h4 id="totalInvested">₹0.00</h4>
+          <p>Capital currently deployed into holdings across your simulated portfolio.</p>
+        </div>
+
+        <div class="summary-card">
+          <small>Current Portfolio Value</small>
+          <h4 id="portfolioValue">₹0.00</h4>
+          <p>Dynamic current value based on changing backend stock prices.</p>
+        </div>
+
+        <div class="summary-card">
+          <small>Total Profit / Loss</small>
+          <h4 id="totalPnl">₹0.00</h4>
+          <p>Net gain or loss from your active positions.</p>
+        </div>
+
+        <div class="summary-card">
+          <small>Total Transactions</small>
+          <h4 id="transactionCount">0</h4>
+          <p>All recorded fund additions and trade activity from backend.</p>
+        </div>
+      </section>
+
+      <section class="bottom-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h5>Top Market Movers</h5>
+              <span>Best performing backend stocks</span>
+            </div>
+            <span id="marketTime">Updated now</span>
+          </div>
+
+          <div class="stock-list" id="stockList"></div>
+
+          <div class="chart-strip">
+            <div class="panel-header" style="margin-bottom: 0;">
+              <div>
+                <h5 style="font-size:18px;">Portfolio Pulse</h5>
+                <span>Visual movement preview</span>
+              </div>
+            </div>
+            <div class="bars" id="bars"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h5>Recent Activity</h5>
+              <span>Latest backend transaction actions</span>
+            </div>
+          </div>
+
+          <div class="activity-list" id="activityList"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const API_BASE_URL = "http://localhost:8085/api";
+    const MAX_WALLET = 100000;
+
+    let marketStocks = [];
+    let portfolioData = null;
+    let walletData = null;
+    let transactionData = [];
+
+    function formatINR(value) {
+      return "₹" + Number(value || 0).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatPct(value) {
+      const num = Number(value || 0);
+      return `${num >= 0 ? "+" : ""}${num.toFixed(2)}%`;
+    }
+
+    function goToPage(page) {
+      window.location.href = page;
+    }
+
+    function getUserId() {
+      return localStorage.getItem("tradewisev2_user_id");
+    }
+
+    function loadUser() {
+      const storedName = localStorage.getItem("tradewisev2_user_name") || "Trader";
+      const storedEmail = localStorage.getItem("tradewisev2_user_email") || "user@email.com";
+
+      document.getElementById("userName").textContent = storedName;
+      document.getElementById("userEmail").textContent = storedEmail;
+      document.getElementById("welcomeTitle").textContent = `Welcome back, ${storedName.split(" ")[0]}`;
+    }
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("marketTime").textContent =
+        "Updated " + now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+
+    async function loadWallet() {
+      const userId = getUserId();
+      if (!userId) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/wallet/${userId}`);
+        const data = await response.json().catch(() => null);
+        if (!response.ok) throw new Error();
+        walletData = data;
+      } catch {
+        walletData = null;
+      }
+    }
+
+    async function loadPortfolio() {
+      const userId = getUserId();
+      if (!userId) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/portfolio/${userId}`);
+        const data = await response.json().catch(() => null);
+        if (!response.ok) throw new Error();
+        portfolioData = data;
+      } catch {
+        portfolioData = null;
+      }
+    }
+
+    async function loadTransactions() {
+      const userId = getUserId();
+      if (!userId) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/transactions/${userId}`);
+        const data = await response.json().catch(() => []);
+        if (!response.ok || !Array.isArray(data)) throw new Error();
+        transactionData = data;
+      } catch {
+        transactionData = [];
+      }
+    }
+
+    async function loadStocks() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/stocks/movers/top`);
+        const data = await response.json().catch(() => []);
+        if (!response.ok || !Array.isArray(data)) throw new Error();
+        marketStocks = data;
+      } catch {
+        marketStocks = [];
+      }
+    }
+
+    function renderSummary() {
+      const walletBalance = Number(walletData?.balance || 0);
+      const remaining = MAX_WALLET - walletBalance;
+
+      const invested = Number(portfolioData?.totalInvested || 0);
+      const current = Number(portfolioData?.currentValue || 0);
+      const pnl = Number(portfolioData?.totalProfitLoss || 0);
+      const txCount = transactionData.length;
+
+      document.getElementById("walletBalance").textContent = formatINR(walletBalance);
+      document.getElementById("remainingLimit").textContent = formatINR(remaining);
+
+      const todayPnlEl = document.getElementById("todayPnl");
+      todayPnlEl.textContent = `${pnl >= 0 ? "+" : "-"}${formatINR(Math.abs(pnl))}`;
+      todayPnlEl.className = pnl >= 0 ? "green" : "red";
+
+      document.getElementById("totalInvested").textContent = formatINR(invested);
+      document.getElementById("portfolioValue").textContent = formatINR(current);
+
+      const totalPnlEl = document.getElementById("totalPnl");
+      totalPnlEl.textContent = `${pnl >= 0 ? "+" : "-"}${formatINR(Math.abs(pnl))}`;
+      totalPnlEl.className = pnl >= 0 ? "green" : "red";
+
+      document.getElementById("transactionCount").textContent = txCount;
+    }
+
+    function renderStocks() {
+      const stockList = document.getElementById("stockList");
+      stockList.innerHTML = "";
+
+      if (!marketStocks.length) {
+        stockList.innerHTML = `
+          <div class="empty-state">
+            Unable to load top market movers. Please make sure backend is running.
+          </div>
+        `;
+        return;
+      }
+
+      marketStocks.forEach(stock => {
+        const item = document.createElement("div");
+        item.className = "stock-card";
+
+        item.innerHTML = `
+          <div class="stock-left">
+            <h6>${stock.symbol}</h6>
+            <p>${stock.companyName}</p>
+          </div>
+          <div class="stock-right">
+            <strong>${formatINR(stock.currentPrice)}</strong>
+            <span class="${Number(stock.changePercent) >= 0 ? "green" : "red"}">
+              ${formatPct(stock.changePercent)}
+            </span>
+          </div>
+        `;
+
+        stockList.appendChild(item);
+      });
+    }
+
+    function renderActivities() {
+      const activityList = document.getElementById("activityList");
+      activityList.innerHTML = "";
+
+      if (!transactionData.length) {
+        activityList.innerHTML = `
+          <div class="empty-state">
+            No recent activity yet. Add funds or buy stocks to start building your dashboard activity.
+          </div>
+        `;
+        return;
+      }
+
+      transactionData.slice(0, 4).forEach(activity => {
+        const isBuy = activity.transactionType === "BUY";
+        const isSell = activity.transactionType === "SELL";
+        const isFund = activity.transactionType === "FUND_ADD";
+
+        const title = isFund
+          ? "Added wallet funds"
+          : `${activity.transactionType} ${activity.stockSymbol}`;
+
+        const detail = isFund
+          ? "Funds added to backend wallet"
+          : `Qty ${activity.quantity} • Price ${formatINR(activity.pricePerStock)}`;
+
+        const amountText =
+          `${isSell || isFund ? "+" : "-"}${formatINR(activity.totalAmount)}`;
+
+        const amountClass = isBuy ? "red" : "green";
+
+        const item = document.createElement("div");
+        item.className = "activity-item";
+
+        item.innerHTML = `
+          <div class="activity-left">
+            <strong>${title}</strong>
+            <p>${detail}</p>
+          </div>
+          <div class="activity-right">
+            <strong class="${amountClass}">${amountText}</strong>
+            <span>${new Date(activity.timestamp).toLocaleString("en-IN")}</span>
+          </div>
+        `;
+
+        activityList.appendChild(item);
+      });
+    }
+
+    function renderBars() {
+      const bars = document.getElementById("bars");
+      bars.innerHTML = "";
+
+      const holdings = portfolioData?.holdings || [];
+
+      if (!holdings.length) {
+        for (let i = 0; i < 8; i++) {
+          const bar = document.createElement("div");
+          bar.className = "bar";
+          bar.style.height = `${25 + i * 4}px`;
+          bars.appendChild(bar);
+        }
+        return;
+      }
+
+      holdings.slice(0, 12).forEach(item => {
+        const current = Number(item.currentValue || 0);
+        const invested = Number(item.investedValue || 0);
+        const ratio = invested > 0 ? current / invested : 1;
+        const height = Math.max(28, Math.min(120, ratio * 70));
+
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        bar.style.height = `${height}px`;
+        bars.appendChild(bar);
+      });
+    }
+
+    async function refreshDashboard() {
+      await Promise.all([
+        loadWallet(),
+        loadPortfolio(),
+        loadTransactions(),
+        loadStocks()
+      ]);
+
+      renderSummary();
+      renderStocks();
+      renderActivities();
+      renderBars();
+      updateClock();
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("tradewisev2_logged_in");
+      localStorage.removeItem("tradewisev2_user_id");
+      localStorage.removeItem("tradewisev2_user_name");
+      localStorage.removeItem("tradewisev2_user_email");
+      window.location.href = "login.html";
+    }
+
+    window.addEventListener("DOMContentLoaded", async function () {
+      loadUser();
+      await refreshDashboard();
+
+      setInterval(async () => {
+        await refreshDashboard();
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

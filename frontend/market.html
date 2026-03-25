@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeWise V2 | Market</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.08), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.10), transparent 28%),
+        linear-gradient(135deg, #06101d 0%, #081221 42%, #0b1424 100%);
+      color: #f8fafc;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: rgba(5, 10, 20, 0.92);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #22c55e, #3b82f6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.24);
+    }
+
+    .brand-text h1 {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .profile-card {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(17, 28, 52, 0.96), rgba(11, 67, 48, 0.86));
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 18px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+    }
+
+    .profile-card small {
+      display: block;
+      color: #cbd5e1;
+      font-size: 11px;
+      margin-bottom: 8px;
+      letter-spacing: 0.4px;
+    }
+
+    .profile-card h2 {
+      font-size: 28px;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .profile-card p {
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .nav-title {
+      color: #64748b;
+      font-size: 12px;
+      margin: 14px 0 12px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      color: #e2e8f0;
+      padding: 16px 18px;
+      border-radius: 18px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.06);
+      transform: translateX(2px);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(59, 130, 246, 0.18));
+      border-color: rgba(110, 231, 183, 0.20);
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.10);
+    }
+
+    .logout-btn {
+      margin-top: 18px;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 15px 18px;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .main {
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .topbar-left h3 {
+      font-size: 34px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      letter-spacing: -0.8px;
+    }
+
+    .topbar-left p {
+      color: #94a3b8;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .market-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.10);
+      border: 1px solid rgba(34, 197, 94, 0.18);
+      color: #bbf7d0;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .market-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34,197,94,0.8);
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.6; }
+    }
+
+    .hero-split {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .left-panel,
+    .right-panel,
+    .watch-panel,
+    .trading-panel {
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.04);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.16);
+      backdrop-filter: blur(8px);
+    }
+
+    .left-panel {
+      padding: 26px;
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 22%),
+        linear-gradient(135deg, rgba(13, 22, 39, 0.98), rgba(8, 24, 49, 0.94));
+    }
+
+    .market-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 15px;
+      border-radius: 999px;
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(96,165,250,0.18);
+      color: #bfdbfe;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .left-panel h1 {
+      font-size: 42px;
+      line-height: 1.08;
+      margin-bottom: 12px;
+      letter-spacing: -0.8px;
+    }
+
+    .left-panel p {
+      color: #cbd5e1;
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 22px;
+      max-width: 720px;
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .search-input,
+    .filter-select {
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(8, 15, 28, 0.92);
+      color: white;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .search-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .small-btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-weight: 800;
+      font-size: 14px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #03210f;
+      transition: 0.25s ease;
+    }
+
+    .small-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .mini-stat {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .mini-stat small {
+      display: block;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .mini-stat span {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .right-panel {
+      overflow: hidden;
+      min-height: 480px;
+      position: relative;
+      background:
+        linear-gradient(to top, rgba(4, 10, 22, 0.60), rgba(4, 10, 22, 0.15)),
+        url('https://i.pinimg.com/736x/51/6f/13/516f13aadefe682d7f466834f19aa938.jpg') center/cover no-repeat;
+      display: flex;
+      align-items: flex-end;
+      padding: 28px;
+    }
+
+    .right-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(4,10,22,0.08), rgba(4,10,22,0.76)),
+        radial-gradient(circle at top right, rgba(34,197,94,0.12), transparent 24%);
+    }
+
+    .right-content {
+      position: relative;
+      z-index: 2;
+      max-width: 430px;
+    }
+
+    .right-content h2 {
+      font-size: 34px;
+      margin-bottom: 12px;
+      line-height: 1.08;
+    }
+
+    .right-content p {
+      color: #dbeafe;
+      line-height: 1.8;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+
+    .right-ticker {
+      display: inline-flex;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      font-size: 13px;
+      font-weight: 800;
+      color: #dcfce7;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+    }
+
+    .watch-panel,
+    .trading-panel {
+      padding: 22px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .panel-header h4 {
+      font-size: 24px;
+    }
+
+    .panel-header span {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .stock-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .stock-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 14px;
+      align-items: center;
+      transition: 0.25s ease;
+    }
+
+    .stock-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .stock-main h5 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .stock-main p {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .stock-price-box {
+      text-align: right;
+    }
+
+    .stock-price-box strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .stock-price-box span {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .green {
+      color: #86efac;
+    }
+
+    .red {
+      color: #fca5a5;
+    }
+
+    .buy-btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: 800;
+      font-size: 13px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #03210f;
+      min-width: 86px;
+    }
+
+    .trade-box {
+      padding: 20px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(14, 23, 41, 0.98), rgba(8, 38, 41, 0.88));
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 16px;
+    }
+
+    .trade-box small {
+      display: block;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .trade-box h3 {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .trade-box p {
+      color: #cbd5e1;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .trade-form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .trade-form label {
+      font-size: 14px;
+      color: #dbeafe;
+      font-weight: 600;
+    }
+
+    .trade-form select,
+    .trade-form input {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(8, 15, 28, 0.92);
+      color: white;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .trade-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .trade-submit {
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 15px 18px;
+      font-weight: 800;
+      font-size: 15px;
+      transition: 0.25s ease;
+      color: white;
+    }
+
+    .trade-submit:hover {
+      transform: translateY(-2px);
+    }
+
+    .trade-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .buy-submit {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #03210f;
+    }
+
+    .sell-submit {
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+    }
+
+    .trade-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .summary-mini {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .summary-mini small {
+      display: block;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .summary-mini strong {
+      font-size: 20px;
+    }
+
+    .message {
+      min-height: 20px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .loading {
+      color: #93c5fd;
+    }
+
+    @media (max-width: 1250px) {
+      .hero-split,
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .main {
+        padding: 16px;
+      }
+
+      .search-row,
+      .mini-stats,
+      .trade-summary,
+      .trade-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .stock-card {
+        grid-template-columns: 1fr;
+        text-align: left;
+      }
+
+      .stock-price-box {
+        text-align: left;
+      }
+
+      .left-panel h1,
+      .right-content h2 {
+        font-size: 30px;
+      }
+
+      .topbar-left h3 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand-wrap">
+          <div class="brand-badge">TW</div>
+          <div class="brand-text">
+            <h1>TradeWise V2</h1>
+            <p>Premium paper trading</p>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <small>Logged in as</small>
+          <h2 id="userName">Trader</h2>
+          <p id="userEmail">user@email.com</p>
+        </div>
+
+        <div class="nav-title">Navigation</div>
+
+        <div class="nav-list">
+          <button class="nav-btn" onclick="goToPage('dashboard.html')">Dashboard</button>
+          <button class="nav-btn active" onclick="goToPage('market.html')">Market</button>
+          <button class="nav-btn" onclick="goToPage('portfolio.html')">Portfolio</button>
+          <button class="nav-btn" onclick="goToPage('watchlist.html')">Watchlist</button>
+          <button class="nav-btn" onclick="goToPage('transactions.html')">Transactions</button>
+          <button class="nav-btn" onclick="goToPage('live-track.html')">Live Track</button>
+          <button class="nav-btn" onclick="goToPage('funds.html')">Funds</button>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="logoutUser()">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h3>Market Overview</h3>
+          <p>
+            Track Indian stocks, observe dynamic movement, search fast, and place paper trades
+            with a clean market-first experience backed by real APIs.
+          </p>
+        </div>
+
+        <div class="market-pill">
+          <div class="market-dot"></div>
+          Backend stocks live refresh every 2 seconds
+        </div>
+      </div>
+
+      <section class="hero-split">
+        <div class="left-panel">
+          <div class="market-label">Indian Stock Market • Trade Ready</div>
+          <h1>Explore the market, find momentum, and place your next paper trade.</h1>
+          <p>
+            This market page is now driven by backend APIs. Search stocks, watch movement,
+            preview pricing, and place real paper buy and sell orders through wallet-based trading.
+          </p>
+
+          <div class="search-row">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by symbol or company..." />
+            <select id="filterSelect" class="filter-select">
+              <option value="all">All Stocks</option>
+              <option value="gainers">Top Gainers</option>
+              <option value="losers">Top Losers</option>
+            </select>
+            <button class="small-btn" onclick="resetFilters()">Reset</button>
+          </div>
+
+          <div class="mini-stats">
+            <div class="mini-stat">
+              <small>Best Mover</small>
+              <strong id="topMover">--</strong>
+              <span id="topMoverChange" class="green">--</span>
+            </div>
+            <div class="mini-stat">
+              <small>Available Wallet</small>
+              <strong id="walletBalance">₹0.00</strong>
+              <span>Current backend wallet balance</span>
+            </div>
+            <div class="mini-stat">
+              <small>Tracked Stocks</small>
+              <strong id="stockCount">0</strong>
+              <span>Backend-seeded Indian market stocks</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-panel">
+          <div class="right-overlay"></div>
+          <div class="right-content">
+            <div class="right-ticker" id="heroTicker">Loading live market pulse...</div>
+            <h2>High-conviction setups start with strong market awareness.</h2>
+            <p>
+              Follow key Indian stocks, identify movement, and get a realistic feel of an active
+              trading environment while using your real paper trading wallet.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="bottom-grid">
+        <div class="watch-panel">
+          <div class="panel-header">
+            <div>
+              <h4>Tradeable Stocks</h4>
+              <span>Real backend market board</span>
+            </div>
+            <span id="marketTime">Updated now</span>
+          </div>
+
+          <div class="stock-grid" id="stockGrid"></div>
+        </div>
+
+        <div class="trading-panel">
+          <div class="trade-box">
+            <small>Quick Trade Preview</small>
+            <h3 id="selectedStockTitle">Select a stock</h3>
+            <p id="selectedStockDesc">
+              Choose a stock from the market list to preview the order amount and place your buy or sell order.
+            </p>
+          </div>
+
+          <div class="trade-form">
+            <div>
+              <label for="stockSelect">Selected Stock</label>
+              <select id="stockSelect"></select>
+            </div>
+
+            <div>
+              <label for="quantityInput">Quantity</label>
+              <input type="number" id="quantityInput" min="1" value="1" />
+            </div>
+
+            <div class="trade-summary">
+              <div class="summary-mini">
+                <small>Current Price</small>
+                <strong id="previewPrice">₹0.00</strong>
+              </div>
+              <div class="summary-mini">
+                <small>Total Amount</small>
+                <strong id="previewTotal">₹0.00</strong>
+              </div>
+            </div>
+
+            <div id="tradeMessage" class="message"></div>
+
+            <div class="trade-buttons">
+              <button class="trade-submit buy-submit" id="buyBtn" onclick="buyStock()">Buy Stock</button>
+              <button class="trade-submit sell-submit" id="sellBtn" onclick="sellStock()">Sell Stock</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const API_BASE_URL = "http://localhost:8085/api";
+
+    let stockData = [];
+
+    const stockGrid = document.getElementById("stockGrid");
+    const stockSelect = document.getElementById("stockSelect");
+    const quantityInput = document.getElementById("quantityInput");
+    const searchInput = document.getElementById("searchInput");
+    const filterSelect = document.getElementById("filterSelect");
+    const tradeMessage = document.getElementById("tradeMessage");
+    const buyBtn = document.getElementById("buyBtn");
+    const sellBtn = document.getElementById("sellBtn");
+
+    function formatINR(value) {
+      return "₹" + Number(value || 0).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatPct(value) {
+      const num = Number(value || 0);
+      return `${num >= 0 ? "+" : ""}${num.toFixed(2)}%`;
+    }
+
+    function goToPage(page) {
+      window.location.href = page;
+    }
+
+    function getUserId() {
+      return localStorage.getItem("tradewisev2_user_id");
+    }
+
+    function loadUser() {
+      const storedName = localStorage.getItem("tradewisev2_user_name") || "Trader";
+      const storedEmail = localStorage.getItem("tradewisev2_user_email") || "user@email.com";
+      document.getElementById("userName").textContent = storedName;
+      document.getElementById("userEmail").textContent = storedEmail;
+    }
+
+    function showTradeMessage(text, type) {
+      tradeMessage.textContent = text;
+      tradeMessage.className = `message ${type}`;
+    }
+
+    function setTradeLoading(isLoading, mode = "both") {
+      if (mode === "buy" || mode === "both") {
+        buyBtn.disabled = isLoading;
+        buyBtn.textContent = isLoading ? "Processing Buy..." : "Buy Stock";
+      }
+
+      if (mode === "sell" || mode === "both") {
+        sellBtn.disabled = isLoading;
+        sellBtn.textContent = isLoading ? "Processing Sell..." : "Sell Stock";
+      }
+    }
+
+    async function loadWallet() {
+      const userId = getUserId();
+      if (!userId) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/wallet/${userId}`);
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(data?.message || "Unable to fetch wallet.");
+        }
+
+        document.getElementById("walletBalance").textContent = formatINR(data.balance);
+      } catch (error) {
+        document.getElementById("walletBalance").textContent = "Unavailable";
+      }
+    }
+
+    async function loadStocks() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/stocks`);
+        const data = await response.json().catch(() => []);
+
+        if (!response.ok || !Array.isArray(data)) {
+          throw new Error("Unable to fetch stocks.");
+        }
+
+        stockData = data;
+        document.getElementById("stockCount").textContent = stockData.length;
+
+        populateSelect();
+        renderStocks();
+        updateMarketSummary();
+
+        if (stockData.length && !stockSelect.value) {
+          selectStock(stockData[0].symbol);
+        } else {
+          updateTradePreview();
+        }
+      } catch (error) {
+        stockGrid.innerHTML = `
+          <div class="stock-card">
+            <div class="stock-main">
+              <h5>Unable to load stocks</h5>
+              <p>Please check whether backend is running.</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function populateSelect() {
+      const currentValue = stockSelect.value;
+      stockSelect.innerHTML = stockData.map(stock =>
+        `<option value="${stock.symbol}">${stock.symbol} - ${stock.companyName}</option>`
+      ).join("");
+
+      if (currentValue && stockData.some(s => s.symbol === currentValue)) {
+        stockSelect.value = currentValue;
+      }
+    }
+
+    function getFilteredStocks() {
+      const search = searchInput.value.trim().toLowerCase();
+      const filter = filterSelect.value;
+
+      let filtered = [...stockData];
+
+      if (search) {
+        filtered = filtered.filter(stock =>
+          stock.symbol.toLowerCase().includes(search) ||
+          stock.companyName.toLowerCase().includes(search)
+        );
+      }
+
+      if (filter === "gainers") {
+        filtered = filtered.filter(stock => Number(stock.changePercent) >= 0);
+      } else if (filter === "losers") {
+        filtered = filtered.filter(stock => Number(stock.changePercent) < 0);
+      }
+
+      return filtered;
+    }
+
+    function renderStocks() {
+      const filtered = getFilteredStocks();
+      stockGrid.innerHTML = "";
+
+      filtered.forEach(stock => {
+        const card = document.createElement("div");
+        card.className = "stock-card";
+
+        card.innerHTML = `
+          <div class="stock-main">
+            <h5>${stock.symbol}</h5>
+            <p>${stock.companyName}</p>
+          </div>
+          <div class="stock-price-box">
+            <strong>${formatINR(stock.currentPrice)}</strong>
+            <span class="${Number(stock.changePercent) >= 0 ? "green" : "red"}">
+              ${formatPct(stock.changePercent)}
+            </span>
+          </div>
+          <button class="buy-btn" onclick="selectStock('${stock.symbol}')">Select</button>
+        `;
+
+        stockGrid.appendChild(card);
+      });
+
+      if (!filtered.length) {
+        stockGrid.innerHTML = `
+          <div class="stock-card">
+            <div class="stock-main">
+              <h5>No stocks found</h5>
+              <p>Try changing your search or filter.</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function updateMarketSummary() {
+      if (!stockData.length) return;
+
+      const gainers = [...stockData].sort((a, b) => Number(b.changePercent) - Number(a.changePercent));
+      const top = gainers[0];
+
+      document.getElementById("topMover").textContent = top.symbol;
+      document.getElementById("topMoverChange").textContent = formatPct(top.changePercent);
+      document.getElementById("topMoverChange").className = Number(top.changePercent) >= 0 ? "green" : "red";
+      document.getElementById("heroTicker").textContent =
+        `${top.symbol} ${formatPct(top.changePercent)} • ${formatINR(top.currentPrice)} • Live backend movement`;
+    }
+
+    function selectStock(symbol) {
+      stockSelect.value = symbol;
+      updateTradePreview();
+
+      const stock = stockData.find(s => s.symbol === symbol);
+      if (!stock) return;
+
+      document.getElementById("selectedStockTitle").textContent = stock.symbol;
+      document.getElementById("selectedStockDesc").textContent =
+        `${stock.companyName} is currently trading at ${formatINR(stock.currentPrice)} with movement ${formatPct(stock.changePercent)}.`;
+    }
+
+    function updateTradePreview() {
+      const symbol = stockSelect.value;
+      const quantity = Number(quantityInput.value) || 0;
+      const stock = stockData.find(s => s.symbol === symbol);
+
+      if (!stock) {
+        document.getElementById("previewPrice").textContent = "₹0.00";
+        document.getElementById("previewTotal").textContent = "₹0.00";
+        return;
+      }
+
+      const total = Number(stock.currentPrice) * quantity;
+      document.getElementById("previewPrice").textContent = formatINR(stock.currentPrice);
+      document.getElementById("previewTotal").textContent = formatINR(total);
+    }
+
+    async function buyStock() {
+      const userId = getUserId();
+      const symbol = stockSelect.value;
+      const quantity = Number(quantityInput.value);
+
+      if (!userId) {
+        showTradeMessage("No logged in user found. Please login again.", "red");
+        return;
+      }
+
+      if (!symbol) {
+        showTradeMessage("Please select a stock.", "red");
+        return;
+      }
+
+      if (!quantity || quantity < 1) {
+        showTradeMessage("Please enter a valid quantity.", "red");
+        return;
+      }
+
+      setTradeLoading(true, "buy");
+      showTradeMessage("Placing buy order...", "loading");
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/trade/buy`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: Number(userId),
+            symbol: symbol,
+            quantity: quantity
+          })
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(data?.message || "Buy order failed.");
+        }
+
+        showTradeMessage(data?.message || "Stock bought successfully.", "green");
+
+        await loadWallet();
+        await loadStocks();
+
+      } catch (error) {
+        showTradeMessage(error.message || "Unable to connect to backend buy API.", "red");
+      } finally {
+        setTradeLoading(false, "buy");
+      }
+    }
+
+    async function sellStock() {
+      const userId = getUserId();
+      const symbol = stockSelect.value;
+      const quantity = Number(quantityInput.value);
+
+      if (!userId) {
+        showTradeMessage("No logged in user found. Please login again.", "red");
+        return;
+      }
+
+      if (!symbol) {
+        showTradeMessage("Please select a stock.", "red");
+        return;
+      }
+
+      if (!quantity || quantity < 1) {
+        showTradeMessage("Please enter a valid quantity.", "red");
+        return;
+      }
+
+      setTradeLoading(true, "sell");
+      showTradeMessage("Placing sell order...", "loading");
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/trade/sell`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: Number(userId),
+            symbol: symbol,
+            quantity: quantity
+          })
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(data?.message || "Sell order failed.");
+        }
+
+        showTradeMessage(data?.message || "Stock sold successfully.", "green");
+
+        await loadWallet();
+        await loadStocks();
+
+      } catch (error) {
+        showTradeMessage(error.message || "Unable to connect to backend sell API.", "red");
+      } finally {
+        setTradeLoading(false, "sell");
+      }
+    }
+
+    function resetFilters() {
+      searchInput.value = "";
+      filterSelect.value = "all";
+      renderStocks();
+    }
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("marketTime").textContent =
+        "Updated " + now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("tradewisev2_logged_in");
+      localStorage.removeItem("tradewisev2_user_id");
+      localStorage.removeItem("tradewisev2_user_name");
+      localStorage.removeItem("tradewisev2_user_email");
+      window.location.href = "login.html";
+    }
+
+    searchInput.addEventListener("input", renderStocks);
+    filterSelect.addEventListener("change", renderStocks);
+    stockSelect.addEventListener("change", updateTradePreview);
+    quantityInput.addEventListener("input", updateTradePreview);
+
+    window.addEventListener("DOMContentLoaded", async function () {
+      loadUser();
+      updateClock();
+      await loadWallet();
+      await loadStocks();
+
+      setInterval(async () => {
+        await loadStocks();
+        await loadWallet();
+        updateClock();
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

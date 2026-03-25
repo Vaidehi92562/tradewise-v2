@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeWise V2 | Funds</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.08), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.10), transparent 28%),
+        linear-gradient(135deg, #06101d 0%, #081221 42%, #0b1424 100%);
+      color: #f8fafc;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: rgba(5, 10, 20, 0.92);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #22c55e, #3b82f6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.24);
+    }
+
+    .brand-text h1 {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .profile-card {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(17, 28, 52, 0.96), rgba(11, 67, 48, 0.86));
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 18px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+    }
+
+    .profile-card small {
+      display: block;
+      color: #cbd5e1;
+      font-size: 11px;
+      margin-bottom: 8px;
+      letter-spacing: 0.4px;
+    }
+
+    .profile-card h2 {
+      font-size: 28px;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .profile-card p {
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .nav-title {
+      color: #64748b;
+      font-size: 12px;
+      margin: 14px 0 12px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      color: #e2e8f0;
+      padding: 16px 18px;
+      border-radius: 18px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.06);
+      transform: translateX(2px);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(59, 130, 246, 0.18));
+      border-color: rgba(110, 231, 183, 0.20);
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.10);
+    }
+
+    .logout-btn {
+      margin-top: 18px;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 15px 18px;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .main {
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .topbar-left h3 {
+      font-size: 34px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      letter-spacing: -0.8px;
+    }
+
+    .topbar-left p {
+      color: #94a3b8;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .fund-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.10);
+      border: 1px solid rgba(34, 197, 94, 0.18);
+      color: #bbf7d0;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .fund-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34,197,94,0.8);
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.6; }
+    }
+
+    .hero-split {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .left-panel,
+    .right-panel,
+    .history-panel,
+    .info-panel {
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.04);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.16);
+      backdrop-filter: blur(8px);
+    }
+
+    .left-panel {
+      overflow: hidden;
+      min-height: 560px;
+      position: relative;
+      background:
+        linear-gradient(to top, rgba(4, 10, 22, 0.65), rgba(4, 10, 22, 0.14)),
+        url('https://i.pinimg.com/1200x/1b/7f/e2/1b7fe2dfc60ede506cdfca2dd2785b68.jpg') center/cover no-repeat;
+      display: flex;
+      align-items: flex-end;
+      padding: 34px;
+    }
+
+    .left-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(4,10,22,0.08), rgba(4,10,22,0.82)),
+        radial-gradient(circle at top left, rgba(34,197,94,0.12), transparent 24%);
+    }
+
+    .left-content {
+      position: relative;
+      z-index: 2;
+      max-width: 520px;
+    }
+
+    .left-tag {
+      display: inline-flex;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      font-size: 13px;
+      font-weight: 800;
+      color: #dcfce7;
+      margin-bottom: 14px;
+    }
+
+    .left-content h2 {
+      font-size: 40px;
+      margin-bottom: 12px;
+      line-height: 1.08;
+    }
+
+    .left-content p {
+      color: #dbeafe;
+      line-height: 1.8;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+
+    .right-panel {
+      padding: 26px;
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,0.10), transparent 22%),
+        linear-gradient(135deg, rgba(13, 22, 39, 0.98), rgba(11, 20, 37, 0.96));
+    }
+
+    .fund-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 15px;
+      border-radius: 999px;
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(96,165,250,0.18);
+      color: #bfdbfe;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .right-panel h1 {
+      font-size: 42px;
+      line-height: 1.08;
+      margin-bottom: 12px;
+      letter-spacing: -0.8px;
+    }
+
+    .right-panel p {
+      color: #cbd5e1;
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 22px;
+    }
+
+    .wallet-card {
+      padding: 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(16, 74, 48, 0.94), rgba(14, 35, 61, 0.94));
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 16px;
+    }
+
+    .wallet-card small {
+      display: block;
+      color: #d1fae5;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .wallet-card strong {
+      display: block;
+      font-size: 38px;
+      margin-bottom: 8px;
+    }
+
+    .wallet-card span {
+      color: #dbeafe;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .fund-form {
+      display: grid;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .fund-form label {
+      font-size: 14px;
+      color: #dbeafe;
+      font-weight: 600;
+    }
+
+    .fund-form input {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(8, 15, 28, 0.92);
+      color: white;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .quick-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .quick-btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-weight: 800;
+      font-size: 13px;
+      background: rgba(255,255,255,0.06);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .quick-btn:hover {
+      background: rgba(255,255,255,0.10);
+    }
+
+    .fund-submit {
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 15px 18px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #03210f;
+      font-weight: 800;
+      font-size: 15px;
+      transition: 0.25s ease;
+    }
+
+    .fund-submit:hover {
+      transform: translateY(-2px);
+    }
+
+    .fund-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .message {
+      min-height: 20px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .green {
+      color: #86efac;
+    }
+
+    .red {
+      color: #fca5a5;
+    }
+
+    .loading {
+      color: #93c5fd;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+    }
+
+    .history-panel,
+    .info-panel {
+      padding: 22px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .panel-header h4 {
+      font-size: 24px;
+    }
+
+    .panel-header span {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .history-list,
+    .info-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .history-card,
+    .info-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: 0.25s ease;
+    }
+
+    .history-card:hover,
+    .info-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .history-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .history-left strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .history-left p {
+      color: #94a3b8;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .history-right {
+      text-align: right;
+    }
+
+    .history-right strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .history-right span {
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    .info-card strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .info-card p {
+      color: #94a3b8;
+      line-height: 1.7;
+      font-size: 13px;
+    }
+
+    @media (max-width: 1300px) {
+      .hero-split,
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .main {
+        padding: 16px;
+      }
+
+      .left-content h2,
+      .right-panel h1 {
+        font-size: 30px;
+      }
+
+      .topbar-left h3 {
+        font-size: 28px;
+      }
+
+      .left-panel {
+        min-height: 420px;
+      }
+
+      .history-right {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand-wrap">
+          <div class="brand-badge">TW</div>
+          <div class="brand-text">
+            <h1>TradeWise V2</h1>
+            <p>Premium paper trading</p>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <small>Logged in as</small>
+          <h2 id="userName">Trader</h2>
+          <p id="userEmail">user@email.com</p>
+        </div>
+
+        <div class="nav-title">Navigation</div>
+
+        <div class="nav-list">
+          <button class="nav-btn" onclick="goToPage('dashboard.html')">Dashboard</button>
+          <button class="nav-btn" onclick="goToPage('market.html')">Market</button>
+          <button class="nav-btn" onclick="goToPage('portfolio.html')">Portfolio</button>
+          <button class="nav-btn" onclick="goToPage('watchlist.html')">Watchlist</button>
+          <button class="nav-btn" onclick="goToPage('transactions.html')">Transactions</button>
+          <button class="nav-btn" onclick="goToPage('live-track.html')">Live Track</button>
+          <button class="nav-btn active" onclick="goToPage('funds.html')">Funds</button>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="logoutUser()">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h3>Funds</h3>
+          <p>
+            Add money to your paper trading wallet, maintain discipline with a maximum cap,
+            and use only available funds for future trading actions.
+          </p>
+        </div>
+
+        <div class="fund-pill">
+          <div class="fund-dot"></div>
+          Wallet limit active • Max ₹1,00,000
+        </div>
+      </div>
+
+      <section class="hero-split">
+        <div class="left-panel">
+          <div class="left-overlay"></div>
+          <div class="left-content">
+            <div class="left-tag" id="heroTag">Controlled capital creates better paper trading habits</div>
+            <h2>Smart traders respect limits before they place trades.</h2>
+            <p>
+              Use your wallet intentionally, add funds within the allowed cap, and build
+              realistic trade discipline instead of trading with unlimited balance.
+            </p>
+          </div>
+        </div>
+
+        <div class="right-panel">
+          <div class="fund-label">Wallet • Limits • Fund History</div>
+          <h1>Manage your trading balance with clarity and control.</h1>
+          <p>
+            Add funds to your paper trading wallet, stay within the maximum ₹1,00,000 limit,
+            and track every wallet top-up clearly.
+          </p>
+
+          <div class="wallet-card">
+            <small>AVAILABLE WALLET BALANCE</small>
+            <strong id="walletBalance">₹0.00</strong>
+            <span id="remainingText">Remaining limit: ₹1,00,000.00</span>
+          </div>
+
+          <div class="fund-form">
+            <div>
+              <label for="fundInput">Enter Amount</label>
+              <input type="number" id="fundInput" placeholder="Enter amount to add" min="1" />
+            </div>
+
+            <div class="quick-row">
+              <button class="quick-btn" onclick="setQuickAmount(1000)">+ ₹1,000</button>
+              <button class="quick-btn" onclick="setQuickAmount(5000)">+ ₹5,000</button>
+              <button class="quick-btn" onclick="setQuickAmount(10000)">+ ₹10,000</button>
+              <button class="quick-btn" onclick="setQuickAmount(25000)">+ ₹25,000</button>
+            </div>
+
+            <div id="messageBox" class="message"></div>
+
+            <button class="fund-submit" id="fundSubmitBtn" onclick="addFunds()">Add Funds</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="bottom-grid">
+        <div class="history-panel">
+          <div class="panel-header">
+            <div>
+              <h4>Fund History</h4>
+              <span>Recent wallet additions</span>
+            </div>
+            <span id="updatedTime">Updated now</span>
+          </div>
+
+          <div class="history-list" id="historyList"></div>
+        </div>
+
+        <div class="info-panel">
+          <div class="panel-header">
+            <div>
+              <h4>Funds Insights</h4>
+              <span>Why wallet discipline matters</span>
+            </div>
+          </div>
+
+          <div class="info-list">
+            <div class="info-card">
+              <strong>Capital discipline</strong>
+              <p>
+                A capped wallet forces more realistic trading behavior and reduces careless order flow.
+              </p>
+            </div>
+            <div class="info-card">
+              <strong>Better risk awareness</strong>
+              <p>
+                When money is limited, trade sizing and position discipline become much more meaningful.
+              </p>
+            </div>
+            <div class="info-card">
+              <strong>Realistic simulation</strong>
+              <p>
+                This wallet system makes the project feel closer to real trading platforms instead of unlimited demo trading.
+              </p>
+            </div>
+            <div class="info-card">
+              <strong>Trade readiness</strong>
+              <p>
+                Every future buy action should depend on the available wallet balance shown here.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const API_BASE_URL = "http://localhost:8085/api";
+    const MAX_WALLET = 100000;
+
+    function goToPage(page) {
+      window.location.href = page;
+    }
+
+    function formatINR(value) {
+      return "₹" + Number(value).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function getUserId() {
+      return localStorage.getItem("tradewisev2_user_id");
+    }
+
+    function loadUser() {
+      const storedName = localStorage.getItem("tradewisev2_user_name") || "Trader";
+      const storedEmail = localStorage.getItem("tradewisev2_user_email") || "user@email.com";
+      document.getElementById("userName").textContent = storedName;
+      document.getElementById("userEmail").textContent = storedEmail;
+    }
+
+    function showMessage(text, type) {
+      const box = document.getElementById("messageBox");
+      box.textContent = text;
+      box.className = `message ${type}`;
+    }
+
+    function setQuickAmount(amount) {
+      document.getElementById("fundInput").value = amount;
+    }
+
+    function setLoadingState(isLoading) {
+      const button = document.getElementById("fundSubmitBtn");
+      button.disabled = isLoading;
+      button.textContent = isLoading ? "Adding Funds..." : "Add Funds";
+    }
+
+    function updateTime() {
+      const now = new Date();
+      document.getElementById("updatedTime").textContent =
+        "Updated " + now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+
+    async function loadWallet() {
+      const userId = getUserId();
+
+      if (!userId) {
+        showMessage("No logged in user found. Please login again.", "red");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/wallet/${userId}`);
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(data?.message || "Unable to fetch wallet.");
+        }
+
+        const balance = Number(data.balance || 0);
+        const remaining = MAX_WALLET - balance;
+
+        document.getElementById("walletBalance").textContent = formatINR(balance);
+        document.getElementById("remainingText").textContent = `Remaining limit: ${formatINR(remaining)}`;
+
+        document.getElementById("heroTag").textContent =
+          balance > 0
+            ? `Wallet funded with ${formatINR(balance)} and ready for disciplined paper trading`
+            : "Controlled capital creates better paper trading habits";
+
+      } catch (error) {
+        showMessage(error.message || "Unable to connect to backend wallet API.", "red");
+      }
+    }
+
+    async function loadFundHistory() {
+      const userId = getUserId();
+
+      if (!userId) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/transactions/${userId}`);
+        const data = await response.json().catch(() => []);
+
+        if (!response.ok) {
+          throw new Error("Unable to fetch fund history.");
+        }
+
+        const historyList = document.getElementById("historyList");
+        historyList.innerHTML = "";
+
+        const fundTransactions = Array.isArray(data)
+          ? data.filter(item => item.transactionType === "FUND_ADD")
+          : [];
+
+        if (!fundTransactions.length) {
+          historyList.innerHTML = `
+            <div class="history-card">
+              <div class="history-left">
+                <strong>No fund activity yet</strong>
+                <p>Add money to your wallet to begin building your transaction-ready balance.</p>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        fundTransactions.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "history-card";
+
+          card.innerHTML = `
+            <div class="history-left">
+              <strong>Wallet Top-up</strong>
+              <p>Funds added to backend wallet successfully</p>
+            </div>
+            <div class="history-right">
+              <strong class="green">+${formatINR(item.totalAmount)}</strong>
+              <span>${new Date(item.timestamp).toLocaleString("en-IN")}</span>
+            </div>
+          `;
+
+          historyList.appendChild(card);
+        });
+
+      } catch (error) {
+        document.getElementById("historyList").innerHTML = `
+          <div class="history-card">
+            <div class="history-left">
+              <strong>Unable to load fund history</strong>
+              <p>Please try again after backend is running properly.</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    async function addFunds() {
+      const userId = getUserId();
+      const input = document.getElementById("fundInput");
+      const amount = Number(input.value);
+
+      if (!userId) {
+        showMessage("No logged in user found. Please login again.", "red");
+        return;
+      }
+
+      if (!amount || amount <= 0) {
+        showMessage("Please enter a valid amount greater than ₹0.", "red");
+        return;
+      }
+
+      setLoadingState(true);
+      showMessage("Adding funds to your backend wallet...", "loading");
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/wallet/add-funds`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: Number(userId),
+            amount: amount
+          })
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(data?.message || "Unable to add funds.");
+        }
+
+        input.value = "";
+        showMessage(`${formatINR(amount)} added successfully to wallet.`, "green");
+
+        await loadWallet();
+        await loadFundHistory();
+        updateTime();
+
+      } catch (error) {
+        showMessage(error.message || "Backend wallet request failed.", "red");
+      } finally {
+        setLoadingState(false);
+      }
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("tradewisev2_logged_in");
+      localStorage.removeItem("tradewisev2_user_id");
+      localStorage.removeItem("tradewisev2_user_name");
+      localStorage.removeItem("tradewisev2_user_email");
+      window.location.href = "login.html";
+    }
+
+    window.addEventListener("DOMContentLoaded", async function () {
+      loadUser();
+      updateTime();
+      await loadWallet();
+      await loadFundHistory();
+    });
+  </script>
+</body>
+</html>

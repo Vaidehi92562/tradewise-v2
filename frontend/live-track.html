@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeWise V2 | Live Track</title>
+  <script src="https://s3.tradingview.com/tv.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.08), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.10), transparent 28%),
+        linear-gradient(135deg, #06101d 0%, #081221 42%, #0b1424 100%);
+      color: #f8fafc;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: rgba(5, 10, 20, 0.92);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #22c55e, #3b82f6);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.24);
+    }
+
+    .brand-text h1 {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .profile-card {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(17, 28, 52, 0.96), rgba(11, 67, 48, 0.86));
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 18px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+    }
+
+    .profile-card small {
+      display: block;
+      color: #cbd5e1;
+      font-size: 11px;
+      margin-bottom: 8px;
+      letter-spacing: 0.4px;
+    }
+
+    .profile-card h2 {
+      font-size: 28px;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .profile-card p {
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .nav-title {
+      color: #64748b;
+      font-size: 12px;
+      margin: 14px 0 12px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      color: #e2e8f0;
+      padding: 16px 18px;
+      border-radius: 18px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.06);
+      transform: translateX(2px);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(59, 130, 246, 0.18));
+      border-color: rgba(110, 231, 183, 0.20);
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.10);
+    }
+
+    .logout-btn {
+      margin-top: 18px;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 15px 18px;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .main {
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .topbar-left h3 {
+      font-size: 34px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      letter-spacing: -0.8px;
+    }
+
+    .topbar-left p {
+      color: #94a3b8;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.10);
+      border: 1px solid rgba(34, 197, 94, 0.18);
+      color: #bbf7d0;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34,197,94,0.8);
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.6; }
+    }
+
+    .hero-card,
+    .stock-card {
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.04);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.16);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-card {
+      padding: 28px;
+      margin-bottom: 20px;
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,0.14), transparent 24%),
+        linear-gradient(135deg, rgba(18, 30, 54, 0.98), rgba(8, 25, 49, 0.94));
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .hero-left h2 {
+      font-size: 20px;
+      color: #93c5fd;
+      margin-bottom: 10px;
+      letter-spacing: 0.2px;
+    }
+
+    .main-value {
+      font-size: 58px;
+      font-weight: 850;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .change-text {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .green {
+      color: #86efac;
+    }
+
+    .red {
+      color: #fca5a5;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .hero-stat {
+      min-width: 130px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .hero-stat small {
+      display: block;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .hero-stat strong {
+      font-size: 20px;
+    }
+
+    .updated-time {
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .chart-wrap {
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .section-title {
+      font-size: 30px;
+      font-weight: 800;
+      margin: 8px 0 18px;
+      letter-spacing: -0.4px;
+    }
+
+    .stock-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 18px;
+    }
+
+    .stock-card {
+      padding: 20px;
+      background:
+        radial-gradient(circle at top right, rgba(34,197,94,0.08), transparent 18%),
+        linear-gradient(135deg, rgba(13, 22, 39, 0.98), rgba(11, 20, 37, 0.96));
+    }
+
+    .stock-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .stock-info h4 {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .stock-info p {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(34,197,94,0.10);
+      border: 1px solid rgba(34,197,94,0.14);
+      color: #86efac;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .live-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse 1.2s infinite;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .stock-price {
+      font-size: 34px;
+      font-weight: 850;
+    }
+
+    .stock-change {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .mini-chart {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+    }
+
+    @media (max-width: 1000px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .main {
+        padding: 16px;
+      }
+
+      .main-value {
+        font-size: 42px;
+      }
+
+      .stock-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar-left h3 {
+        font-size: 28px;
+      }
+
+      .stock-price {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand-wrap">
+          <div class="brand-badge">TW</div>
+          <div class="brand-text">
+            <h1>TradeWise V2</h1>
+            <p>Premium paper trading</p>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <small>Logged in as</small>
+          <h2 id="userName">Trader</h2>
+          <p id="userEmail">user@email.com</p>
+        </div>
+
+        <div class="nav-title">Navigation</div>
+
+        <div class="nav-list">
+          <button class="nav-btn" onclick="goToPage('dashboard.html')">Dashboard</button>
+          <button class="nav-btn" onclick="goToPage('market.html')">Market</button>
+          <button class="nav-btn" onclick="goToPage('portfolio.html')">Portfolio</button>
+          <button class="nav-btn" onclick="goToPage('watchlist.html')">Watchlist</button>
+          <button class="nav-btn" onclick="goToPage('transactions.html')">Transactions</button>
+          <button class="nav-btn active" onclick="goToPage('live-track.html')">Live Track</button>
+          <button class="nav-btn" onclick="goToPage('funds.html')">Funds</button>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="logoutUser()">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h3>Live Track</h3>
+          <p>
+            Watch multiple Indian stocks in one premium live-style screen with fast-moving prices,
+            big market visuals, and a strong trading terminal feel.
+          </p>
+        </div>
+
+        <div class="live-pill">
+          <div class="live-dot"></div>
+          Live simulation updating every 2 seconds
+        </div>
+      </div>
+
+      <section class="hero-card">
+        <div class="hero-top">
+          <div class="hero-left">
+            <h2>NIFTY 50 ›</h2>
+            <div id="niftyPrice" class="main-value">22,992.70</div>
+            <div id="niftyChange" class="change-text green">+480.05 (2.13%)</div>
+          </div>
+
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <small>Open</small>
+              <strong id="niftyOpen">22,878.45</strong>
+            </div>
+            <div class="hero-stat">
+              <small>High</small>
+              <strong id="niftyHigh">23,057.30</strong>
+            </div>
+            <div class="hero-stat">
+              <small>Low</small>
+              <strong id="niftyLow">22,624.20</strong>
+            </div>
+            <div class="updated-time" id="updatedTime">Updated: --</div>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <div id="niftyChart" style="height: 460px;"></div>
+        </div>
+      </section>
+
+      <div class="section-title">Live Market Track</div>
+
+      <section class="stock-grid" id="stockGrid"></section>
+    </main>
+  </div>
+
+  <script>
+    const nifty = {
+      price: 22992.70,
+      prevClose: 22512.65,
+      open: 22878.45,
+      high: 23057.30,
+      low: 22624.20
+    };
+
+    const stocks = [
+      { symbol: "SBIN", company: "State Bank of India", price: 1223.30, prevClose: 1215.10, tv: "NSE:SBIN" },
+      { symbol: "RELIANCE", company: "Reliance Industries", price: 2948.25, prevClose: 2926.85, tv: "NSE:RELIANCE" },
+      { symbol: "TCS", company: "Tata Consultancy Services", price: 4012.80, prevClose: 4025.30, tv: "NSE:TCS" },
+      { symbol: "INFY", company: "Infosys", price: 1628.45, prevClose: 1619.35, tv: "NSE:INFY" },
+      { symbol: "HDFCBANK", company: "HDFC Bank", price: 1687.15, prevClose: 1681.45, tv: "NSE:HDFCBANK" },
+      { symbol: "ICICIBANK", company: "ICICI Bank", price: 1098.40, prevClose: 1090.45, tv: "NSE:ICICIBANK" }
+    ];
+
+    function goToPage(page) {
+      window.location.href = page;
+    }
+
+    function loadUser() {
+      const storedName = localStorage.getItem("tradewisev2_user_name") || "Trader";
+      const storedEmail = localStorage.getItem("tradewisev2_user_email") || "user@email.com";
+      document.getElementById("userName").textContent = storedName;
+      document.getElementById("userEmail").textContent = storedEmail;
+    }
+
+    function formatNumber(num) {
+      return num.toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatDiff(num) {
+      return (num >= 0 ? "+" : "") + formatNumber(num);
+    }
+
+    function formatPercent(num) {
+      return (num >= 0 ? "+" : "") + num.toFixed(2) + "%";
+    }
+
+    function updateTime() {
+      const now = new Date();
+      const options = {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      };
+      document.getElementById("updatedTime").textContent =
+        "Updated: " + now.toLocaleString("en-GB", options).replace(",", "") + " IST";
+    }
+
+    function renderNifty() {
+      const diff = nifty.price - nifty.prevClose;
+      const pct = (diff / nifty.prevClose) * 100;
+
+      document.getElementById("niftyPrice").textContent = formatNumber(nifty.price);
+      const changeEl = document.getElementById("niftyChange");
+      changeEl.textContent = `${formatDiff(diff)} (${formatPercent(pct)})`;
+      changeEl.className = `change-text ${pct >= 0 ? "green" : "red"}`;
+
+      document.getElementById("niftyOpen").textContent = formatNumber(nifty.open);
+      document.getElementById("niftyHigh").textContent = formatNumber(nifty.high);
+      document.getElementById("niftyLow").textContent = formatNumber(nifty.low);
+    }
+
+    function createStockCards() {
+      const stockGrid = document.getElementById("stockGrid");
+      stockGrid.innerHTML = stocks.map((stock, i) => `
+        <div class="stock-card">
+          <div class="stock-head">
+            <div class="stock-info">
+              <h4>${stock.symbol}</h4>
+              <p>${stock.company}</p>
+            </div>
+            <div class="live-badge">LIVE</div>
+          </div>
+
+          <div class="price-row">
+            <div class="stock-price" id="price-${i}">₹${formatNumber(stock.price)}</div>
+            <div id="change-${i}" class="stock-change green">+0.00 (+0.00%)</div>
+          </div>
+
+          <div class="mini-chart">
+            <div id="chart-${i}" style="height: 360px;"></div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderStockValues() {
+      stocks.forEach((stock, i) => {
+        const diff = stock.price - stock.prevClose;
+        const pct = (diff / stock.prevClose) * 100;
+
+        document.getElementById(`price-${i}`).textContent = `₹${formatNumber(stock.price)}`;
+
+        const chgEl = document.getElementById(`change-${i}`);
+        chgEl.textContent = `${formatDiff(diff)} (${formatPercent(pct)})`;
+        chgEl.className = `stock-change ${pct >= 0 ? "green" : "red"}`;
+      });
+    }
+
+    function randomMove(value, magnitude) {
+      return value + (Math.random() * magnitude * 2 - magnitude);
+    }
+
+    function tickNifty() {
+      const oldPrice = nifty.price;
+      nifty.price = randomMove(nifty.price, 18);
+
+      if (nifty.price > nifty.high) nifty.high = nifty.price;
+      if (nifty.price < nifty.low) nifty.low = nifty.price;
+
+      if (Math.abs(nifty.price - oldPrice) < 0.5) {
+        nifty.price += Math.random() > 0.5 ? 1.2 : -1.2;
+      }
+
+      renderNifty();
+    }
+
+    function tickStocks() {
+      stocks.forEach(stock => {
+        const oldPrice = stock.price;
+        const magnitude = Math.max(stock.price * 0.0025, 1.5);
+        stock.price = randomMove(stock.price, magnitude);
+
+        if (Math.abs(stock.price - oldPrice) < 0.05) {
+          stock.price += Math.random() > 0.5 ? 0.4 : -0.4;
+        }
+      });
+
+      renderStockValues();
+    }
+
+    function buildWidgets() {
+      new TradingView.widget({
+        container_id: "niftyChart",
+        width: "100%",
+        height: 460,
+        symbol: "NSE:NIFTY",
+        interval: "5",
+        timezone: "Asia/Kolkata",
+        theme: "dark",
+        style: "2",
+        locale: "en",
+        toolbar_bg: "#0b1424",
+        enable_publishing: false,
+        hide_top_toolbar: false,
+        hide_legend: false,
+        save_image: false,
+        studies: [],
+        withdateranges: true,
+        allow_symbol_change: true
+      });
+
+      stocks.forEach((stock, i) => {
+        new TradingView.widget({
+          container_id: `chart-${i}`,
+          width: "100%",
+          height: 360,
+          symbol: stock.tv,
+          interval: "D",
+          timezone: "Asia/Kolkata",
+          theme: "dark",
+          style: "2",
+          locale: "en",
+          toolbar_bg: "#0b1424",
+          enable_publishing: false,
+          hide_top_toolbar: false,
+          hide_legend: false,
+          save_image: false,
+          withdateranges: true,
+          allow_symbol_change: false
+        });
+      });
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("tradewisev2_logged_in");
+      window.location.href = "login.html";
+    }
+
+    loadUser();
+    createStockCards();
+    renderNifty();
+    renderStockValues();
+    updateTime();
+    buildWidgets();
+
+    setInterval(() => {
+      tickNifty();
+      tickStocks();
+      updateTime();
+    }, 2000);
+  </script>
+</body>
+</html>
