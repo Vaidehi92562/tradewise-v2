@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tradewisev2-prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tradewisev2-prometheus
+  template:
+    metadata:
+      labels:
+        app: tradewisev2-prometheus
+    spec:
+      containers:
+        - name: tradewisev2-prometheus
+          image: prom/prometheus:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9090

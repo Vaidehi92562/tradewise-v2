@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tradewisev2-prometheus
+spec:
+  selector:
+    app: tradewisev2-prometheus
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+      nodePort: 30091
+  type: NodePort

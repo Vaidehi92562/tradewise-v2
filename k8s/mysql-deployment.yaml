@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tradewisev2-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tradewisev2-mysql
+  template:
+    metadata:
+      labels:
+        app: tradewisev2-mysql
+    spec:
+      containers:
+        - name: tradewisev2-mysql
+          image: mysql:8.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: Vaidehi@123
+            - name: MYSQL_DATABASE
+              value: tradewisev2db
