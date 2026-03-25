@@ -1,0 +1,79 @@
+services:
+  tradewisev2-mysql:
+    image: mysql:8.0
+    container_name: tradewisev2-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Vaidehi@123
+      MYSQL_DATABASE: tradewisev2db
+    ports:
+      - "3310:3306"
+    volumes:
+      - tradewisev2_mysql_data:/var/lib/mysql
+    networks:
+      - tradewisev2-network
+
+  tradewisev2-backend:
+    build:
+      context: ./backend
+    container_name: tradewisev2-backend
+    restart: unless-stopped
+    depends_on:
+      - tradewisev2-mysql
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://tradewisev2-mysql:3306/tradewisev2db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Vaidehi@123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - tradewisev2-network
+
+  tradewisev2-frontend:
+    build:
+      context: ./frontend
+    container_name: tradewisev2-frontend
+    restart: unless-stopped
+    depends_on:
+      - tradewisev2-backend
+    ports:
+      - "8090:80"
+    networks:
+      - tradewisev2-network
+
+  tradewisev2-prometheus:
+    image: prom/prometheus:latest
+    container_name: tradewisev2-prometheus
+    restart: unless-stopped
+    depends_on:
+      - tradewisev2-backend
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+      - tradewisev2_prometheus_data:/prometheus
+    networks:
+      - tradewisev2-network
+
+  tradewisev2-grafana:
+    image: grafana/grafana:latest
+    container_name: tradewisev2-grafana
+    restart: unless-stopped
+    depends_on:
+      - tradewisev2-prometheus
+    ports:
+      - "3001:3000"
+    volumes:
+      - tradewisev2_grafana_data:/var/lib/grafana
+    networks:
+      - tradewisev2-network
+
+volumes:
+  tradewisev2_mysql_data:
+  tradewisev2_prometheus_data:
+  tradewisev2_grafana_data:
+
+networks:
+  tradewisev2-network:
+    driver: bridge
